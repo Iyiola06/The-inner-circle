@@ -7,15 +7,36 @@ import { useSiteData, useSafeArray } from '../lib/site-data';
 
 export const DepartmentsSection = () => {
   const { getContent } = useSiteData();
-  const departments = useSafeArray<any>(getContent('departments_preview', []));
+  const departments = useSafeArray<any>(getContent('departments_preview', [])).length > 0
+    ? useSafeArray<any>(getContent('departments_preview', []))
+    : [
+        {
+          title: 'Health and Wellness Department',
+          description: "Great communities don't just grow people intellectually, they care for the whole person. The Health & Wellness Department exists to ensure Inner Circle members are supported in their physical health, mental clarity, and emotional balance.",
+          icon: 'Heart',
+          color: 'bg-brand-primary/10 text-brand-primary',
+        },
+        {
+          title: 'Content Department',
+          description: 'The Content Department is responsible for capturing and communicating what Inner Circle is building through written pieces, social content, community resources, and everything in between.',
+          icon: 'FileText',
+          color: 'bg-brand-primary/10 text-brand-primary',
+        },
+        {
+          title: 'Design Department',
+          description: 'The Design Department shapes the visual identity of Inner Circle, crafting the graphics, assets, templates, and designs that represent the community with clarity and excellence.',
+          icon: 'Palette',
+          color: 'bg-brand-primary/10 text-brand-primary',
+        },
+      ];
 
   return (
     <section id="departments" className="section-spacing px-6 bg-muted/5">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <p className="text-xs uppercase tracking-widest text-muted font-medium mb-4">Specialized Tracks</p>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-medium text-foreground mb-6 tracking-tight">Departments of Excellence</h2>
-          <p className="text-muted max-w-2xl mx-auto font-normal leading-relaxed">Explore our specialized departments designed for holistic growth and skill development.</p>
+          <p className="text-xs uppercase tracking-widest text-muted font-medium mb-4">Departments</p>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-medium text-foreground mb-6 tracking-tight">Departments of Service</h2>
+          <p className="text-muted max-w-2xl mx-auto font-normal leading-relaxed">Inner Circle is strengthened by departments that support the whole person and the whole community.</p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">

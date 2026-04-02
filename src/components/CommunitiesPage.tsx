@@ -12,9 +12,9 @@ export const CommunitiesPage = () => {
   const benefits = useSafeArray<any>(getContent('community_benefits', [])).length > 0
     ? useSafeArray<any>(getContent('community_benefits', []))
     : [
-        { title: 'Growth Support', description: 'Continuous resources and mentorship to keep your momentum high.', icon: 'Sparkles' },
-        { title: 'Accountability', description: 'A disciplined circle that helps you follow through.', icon: 'Shield' },
-        { title: 'Practical Development', description: 'Real frameworks you can apply immediately.', icon: 'Target' },
+        { title: 'Purposeful Growth', description: 'Every circle is built to sharpen a different dimension of your life and leadership.', icon: 'Sparkles' },
+        { title: 'Accountability', description: 'Grow in rooms that challenge you to stay disciplined and consistent.', icon: 'Shield' },
+        { title: 'Practical Development', description: 'Get frameworks, insight and support you can apply in real life.', icon: 'Target' },
       ];
   const faqs = useSafeArray<any>(getContent('community_faqs', [])).length > 0
     ? useSafeArray<any>(getContent('community_faqs', []))
@@ -47,11 +47,11 @@ export const CommunitiesPage = () => {
               The Ecosystem
             </div>
             <h1 className="text-6xl md:text-8xl lg:text-[7rem] font-display font-medium text-foreground mb-8 leading-[0.95] tracking-[-0.03em]">
-              Specialized <br />
-              <span className="text-brand-primary italic font-serif font-light">Circles.</span>
+              Sub <br />
+              <span className="text-brand-primary italic font-serif font-light">Communities.</span>
             </h1>
             <p className="text-xl md:text-2xl text-muted leading-relaxed max-w-2xl mx-auto font-normal">
-              Curated environments designed for specific growth trajectories. Choose your path to excellence.
+              Purpose-built spaces for personal mastery, creative execution and business leadership.
             </p>
           </motion.div>
         </div>
@@ -97,7 +97,7 @@ export const CommunitiesPage = () => {
 
                 <div className="pt-6">
                   <Button variant="primary" size="lg" className="w-full sm:w-auto gap-3 group px-8" onClick={() => { window.open(getWhatsappUrl(community.whatsapp_message || undefined), '_blank'); }}>
-                    Request Access
+                    Become a Circler
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </div>
@@ -158,8 +158,8 @@ export const CommunitiesPage = () => {
       <section className="py-32 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-medium text-foreground mb-6 tracking-tight">The Experience</h2>
-            <p className="text-lg text-muted font-normal leading-relaxed max-w-2xl mx-auto">Every circle is backed by a robust support system designed for your success.</p>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-medium text-foreground mb-6 tracking-tight">Who These Communities Are For</h2>
+            <p className="text-lg text-muted font-normal leading-relaxed max-w-2xl mx-auto">Each community is designed for a different kind of growth journey, but they all share the same culture of faith, discipline and impact.</p>
           </div>
 
           <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-8">
@@ -212,12 +212,12 @@ export const CommunitiesPage = () => {
             <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-black/[0.05] rounded-full blur-[80px] pointer-events-none" />
 
             <div className="relative z-10">
-              <h2 className="text-5xl md:text-6xl lg:text-7xl font-display font-medium mb-8 leading-[0.95] tracking-tight">Your Circle is Waiting. <br /> <span className="text-white/70 italic font-serif font-light">Start Your Journey.</span></h2>
-              <p className="text-white/80 text-lg mb-12 max-w-xl mx-auto leading-relaxed font-normal">Join a community of intentional individuals committed to excellence. Secure your spot today.</p>
+              <h2 className="text-5xl md:text-6xl lg:text-7xl font-display font-medium mb-8 leading-[0.95] tracking-tight">Your Circle is Waiting. <br /> <span className="text-white/70 italic font-serif font-light">Become a Circler.</span></h2>
+              <p className="text-white/80 text-lg mb-12 max-w-xl mx-auto leading-relaxed font-normal">Join a purpose-driven community of intentional individuals committed to growth, discipline and impact.</p>
 
               <div className="flex flex-col sm:flex-row items-center gap-6 justify-center">
                 <Button variant="secondary" size="lg" className="w-full sm:w-auto gap-3 bg-white text-brand-primary border-none hover:bg-white/90 px-8" onClick={() => { window.open(getWhatsappUrl(), '_blank'); }}>
-                  Request Access
+                  Become a Circler
                   <ArrowRight className="w-4 h-4" />
                 </Button>
               </div>

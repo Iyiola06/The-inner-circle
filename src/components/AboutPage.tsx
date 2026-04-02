@@ -12,9 +12,9 @@ export const AboutPage = () => {
   const storyParagraphs = useSafeArray<string>(about.storyParagraphs).length > 0
     ? useSafeArray<string>(about.storyParagraphs)
     : [
-        'Inner Circle began with a simple yet profound realization: in a world of noise and distraction, true impact belongs to the intentional.',
-        'What started as a small gathering has evolved into a faith-centered movement of individuals committed to growth, discipline, and impact.',
-        'Our journey is defined by the lives transformed through structure, accountability, and community.',
+        'Inner Circle is a purpose-driven, faith-centered community and a movement of intentional individuals committed to growth, discipline and impact.',
+        'Built on strong values and guided by faith, the community fosters a culture of accountability, consistency and excellence. It serves as a space where members are challenged, supported and inspired to become better versions of themselves.',
+        'Through this, Inner Circle equips and empowers its members to live disciplined, purposeful and impactful lives.',
       ];
   const visionCards = useSafeArray<any>(about.visionCards).length > 0
     ? useSafeArray<any>(about.visionCards)
@@ -22,6 +22,7 @@ export const AboutPage = () => {
         { title: 'Spiritually Grounded', description: 'Rooted in faith and timeless principles.', icon: 'Anchor', color: 'text-blue-500', bg: 'bg-blue-500/10' },
         { title: 'Mentally Sharp', description: 'Developing wisdom, clarity, and discernment.', icon: 'Zap', color: 'text-purple-500', bg: 'bg-purple-500/10' },
         { title: 'Community Oriented', description: 'Growing inside meaningful accountability.', icon: 'Users', color: 'text-amber-500', bg: 'bg-amber-500/10' },
+        { title: 'Purpose Aligned', description: 'Living and building with direction.', icon: 'Compass', color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
       ];
   const coreValues = useSafeArray<string>(about.coreValues).length > 0
     ? useSafeArray<string>(about.coreValues)
@@ -60,8 +61,8 @@ export const AboutPage = () => {
           <div className="max-w-4xl">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
               <span className="inline-block px-4 py-2 rounded-full bg-surface border border-border/50 text-foreground font-medium text-sm mb-8 shadow-sm">{about.heroBadge || 'Our Story & Vision'}</span>
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-medium text-foreground mb-8 leading-[1.05] tracking-tight">{about.heroTitle || 'Built for the'} <span className="text-brand-primary">{about.heroHighlight || 'Intentional'}</span>.</h1>
-              <p className="text-xl md:text-2xl text-muted leading-relaxed max-w-2xl font-normal">{about.heroDescription || 'The Inner Circle is more than a community; it is a movement of individuals committed to standing out through discipline, faith, and excellence.'}</p>
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-medium text-foreground mb-8 leading-[1.05] tracking-tight">{about.heroTitle || 'Built for'} <span className="text-brand-primary">{about.heroHighlight || 'Intentional Living'}</span>.</h1>
+              <p className="text-xl md:text-2xl text-muted leading-relaxed max-w-2xl font-normal">{about.heroDescription || 'We are a purpose-driven community committed to personal growth, spiritual development and intentional living.'}</p>
             </motion.div>
           </div>
         </div>
@@ -85,7 +86,7 @@ export const AboutPage = () => {
 
       <section className="section-spacing px-6 bg-muted/5">
         <div className="max-w-7xl mx-auto">
-          <SectionHeading subtitle="Our Vision" title={about.visionTitle || 'The Five Pillars of a Circler'} description={about.visionDescription || 'We envision a generation of leaders who are holistically developed across these core dimensions.'} />
+          <SectionHeading subtitle="Our Vision" title={about.visionTitle || 'The Five Pillars of a Circler'} description={about.visionDescription || 'To become a trusted inner ecosystem where young leaders, creatives and professionals are spiritually grounded, mentally sharp, skillfully equipped, community oriented and purpose aligned.'} />
           <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-6">
             {visionCards.map((card, i) => {
               const Icon = getIcon(card.icon);
@@ -137,7 +138,7 @@ export const AboutPage = () => {
 
       <section className="section-spacing px-6 bg-muted/5">
         <div className="max-w-7xl mx-auto">
-          <SectionHeading subtitle="Global Leadership" title="The Minds Behind the Circle" description="Meet the intentional leaders and moderators who guide our global community." />
+          <SectionHeading subtitle="Global Leadership" title="Global Community Moderators" description="Meet the intentional leaders and moderators who guide our global community." />
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {leaders.map((leader, i) => (
               <motion.div key={leader.name || i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="group relative">

@@ -14,17 +14,17 @@ export const CommunitiesSection = () => {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20">
           <div className="max-w-2xl">
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-medium text-foreground mb-6 tracking-tight">
-              Premium Circles
+              Sub Communities
             </h2>
             <p className="text-lg text-muted font-normal leading-relaxed">
-              Join a specialized community designed to help you excel in your specific area of focus. Each circle offers curated resources, expert guidance, and an elite network.
+              Choose the circle that matches your current season of growth, leadership, and purpose.
             </p>
           </div>
           <button
             onClick={() => { window.open(getWhatsappUrl(), '_blank'); }}
             className="hidden md:flex items-center gap-2 text-sm font-medium text-brand-primary hover:text-brand-deep transition-colors"
           >
-            View All Details <ArrowRight className="w-4 h-4" />
+            Explore All Communities <ArrowRight className="w-4 h-4" />
           </button>
         </div>
 
@@ -66,7 +66,7 @@ export const CommunitiesSection = () => {
                     onClick={() => { window.open(getWhatsappUrl(community.whatsapp_message || undefined), '_blank'); }}
                     className="flex items-center justify-between w-full text-sm font-medium text-foreground group/btn hover:text-brand-primary transition-colors"
                   >
-                    <span>Request Access</span>
+                    <span>Become a Circler</span>
                     <ArrowRight className="w-4 h-4 transform group-hover/btn:translate-x-1 transition-transform" />
                   </button>
                 </div>

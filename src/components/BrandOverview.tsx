@@ -14,6 +14,7 @@ export const BrandOverview = () => {
         { icon: 'Target', label: 'Mentally sharp' },
         { icon: 'Zap', label: 'Skillfully equipped' },
         { icon: 'Users', label: 'Community-oriented' },
+        { icon: 'Compass', label: 'Purpose aligned' },
       ];
   const memberAvatars = useSafeArray<string>(content.memberAvatars).length > 0
     ? useSafeArray<string>(content.memberAvatars)
@@ -40,11 +41,11 @@ export const BrandOverview = () => {
               {content.badge || 'Our Essence'}
             </div>
             <h2 className="text-5xl md:text-6xl lg:text-7xl font-display font-medium text-foreground leading-[1.05] tracking-tight">
-              {content.title || 'A Movement of'} <br />
-              <span className="text-brand-primary">{content.highlight || 'Intentional Souls.'}</span>
+              {content.title || 'A Community of'} <br />
+              <span className="text-brand-primary">{content.highlight || 'Intentional Individuals.'}</span>
             </h2>
             <p className="text-muted text-lg md:text-xl leading-relaxed font-normal">
-              {content.description || 'Inner Circle is a purpose-driven, faith-centered ecosystem for individuals committed to spiritual depth, mental clarity, and world-class impact.'}
+              {content.description || 'Inner Circle is a purpose-driven, faith-centered community and a movement of intentional individuals committed to growth, discipline and impact. Built on strong values and guided by faith, the community fosters a culture of accountability, consistency and excellence. It serves as a space where members are challenged, supported and inspired to become better versions of themselves. Through this, Inner Circle equips and empowers its members to live disciplined, purposeful and impactful lives.'}
             </p>
 
             <div className="pt-6 grid grid-cols-2 gap-8">
@@ -78,7 +79,7 @@ export const BrandOverview = () => {
               <div className="w-12 h-1 bg-brand-primary mb-6 rounded-full" />
               <p className="text-brand-primary font-medium text-[10px] uppercase tracking-widest mb-4">Our Vision</p>
               <p className="text-foreground font-medium leading-relaxed text-lg italic font-serif">
-                "{content.visionQuote || 'To raise a disciplined circle of purpose-driven individuals equipped with clarity, competence, and character.'}"
+                "{content.visionQuote || 'To become a trusted inner ecosystem where young leaders, creatives and professionals are spiritually grounded, mentally sharp, skillfully equipped, community oriented and purpose aligned.'}"
               </p>
             </div>
           </motion.div>
@@ -124,9 +125,9 @@ export const BrandOverview = () => {
               <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-xl flex items-center justify-center border border-white/20">
                 <Compass className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-3xl md:text-4xl font-display font-medium">Mission Preview</h3>
+              <h3 className="text-3xl md:text-4xl font-display font-medium">Mission</h3>
               <p className="text-white/80 text-lg leading-relaxed font-normal">
-                {content.missionPreview || 'To raise a disciplined circle of purpose-driven individuals equipped with clarity, competence, character, and capacity to influence their spaces through faith, creativity, and service.'}
+                {content.missionPreview || 'To raise a disciplined circle of purpose-driven individuals who are equipped with clarity, competence, character and capacity to influence their spaces through faith, creativity, leadership and service.'}
               </p>
               <div className="flex flex-wrap gap-3">
                 {missionBullets.map((item, i) => (

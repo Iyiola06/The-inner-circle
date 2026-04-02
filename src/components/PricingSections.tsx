@@ -53,7 +53,7 @@ export const TestimonialSection = () => {
   return (
     <section className="section-spacing px-6 overflow-hidden">
       <div className="max-w-7xl mx-auto">
-        <SectionHeading subtitle="Testimonials" title="What Our Circlers Say" description="Real stories from real leaders who have found their place in The Inner Circle." />
+        <SectionHeading subtitle="Testimonials" title="We Have Helped People Get Better" description="Real stories from members growing in discipline, purpose and impact inside The Inner Circle." />
 
         <div className="flex md:grid md:grid-cols-3 gap-6 overflow-x-auto md:overflow-visible pb-8 md:pb-0 snap-x snap-mandatory scrollbar-hide -mx-6 px-6 md:mx-0 md:px-0">
           {testimonials.map((testimonial, i) => (

@@ -2,8 +2,12 @@ import React from 'react';
 import { Button } from './Button';
 import { motion } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
+import { useSiteData } from '../lib/site-data';
 
 export const Hero = () => {
+  const { getContent } = useSiteData();
+  const hero = getContent<any>('hero', {});
+
   return (
     <section className="relative min-h-screen flex items-center justify-center pt-40 pb-32 px-6 overflow-hidden">
       <div className="absolute inset-0 z-0 pointer-events-none">
@@ -28,9 +32,9 @@ export const Hero = () => {
             transition={{ duration: 1, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
             className="text-6xl md:text-8xl lg:text-[6.5rem] font-display font-medium text-foreground mb-8 leading-[0.95] tracking-[-0.03em]"
           >
-            Intentional leaders <br />
-            <span className="text-brand-primary italic font-serif pr-4 font-light">do not</span> <br />
-            blend in.
+            {hero.title || "Circlers don't"} <br />
+            <span className="text-brand-primary italic font-serif pr-4 font-light">{hero.highlight || 'blend in,'}</span> <br />
+            {hero.subtitleLine || 'they stand out'}
           </motion.h1>
 
           <motion.p
@@ -39,7 +43,7 @@ export const Hero = () => {
             transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className="text-muted text-lg md:text-xl mb-12 max-w-xl mx-auto lg:mx-0 leading-relaxed font-normal"
           >
-            The Inner Circle is a high-impact, faith-centered community for intentional leaders pursuing spiritual mastery, disciplined growth, creativity, and world-class excellence.
+            {hero.description || 'We are a purpose-driven individuals committed to personal growth, spiritual development and intentional living.'}
           </motion.p>
 
           <motion.div
@@ -54,15 +58,26 @@ export const Hero = () => {
               className="w-full sm:w-auto gap-3 group px-8"
               onClick={() => document.getElementById('communities')?.scrollIntoView({ behavior: 'smooth' })}
             >
-              Apply for Membership
+              {hero.primaryCta || 'Become a Circler'}
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Button>
             <button
               onClick={() => document.getElementById('communities')?.scrollIntoView({ behavior: 'smooth' })}
               className="text-sm font-medium text-foreground hover:text-brand-primary transition-colors flex items-center gap-2"
             >
-              Explore Circles
+              {hero.secondaryCta || 'Explore Communities'}
             </button>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-8 text-sm font-medium text-foreground/80"
+          >
+            <span className="px-4 py-2 rounded-full border border-border/40 bg-surface">30+ Circlers</span>
+            <span className="hidden sm:inline text-border">|</span>
+            <span className="px-4 py-2 rounded-full border border-border/40 bg-surface">2 countries</span>
           </motion.div>
         </div>
 

@@ -11,8 +11,51 @@ export const DepartmentsPage = () => {
   const { getContent, getWhatsappUrl } = useSiteData();
   const page = getContent<any>('departments_page', {});
   const departments = useSafeArray<any>(page.departments);
-  const supportCards = useSafeArray<any>(page.supportCards);
-  const leads = useSafeArray<any>(page.leads);
+  const supportCards = useSafeArray<any>(page.supportCards).length > 0
+    ? useSafeArray<any>(page.supportCards)
+    : [
+        { title: 'Whole-Person Care', desc: 'We support members beyond ideas and ambition, with room for physical, emotional and creative wellbeing.', icon: 'Heart' },
+        { title: 'Clear Communication', desc: 'Stories, resources and updates are shaped intentionally so the community stays informed and inspired.', icon: 'MessageSquare' },
+        { title: 'Visual Excellence', desc: 'Design keeps the brand, resources and experience of Inner Circle clear, beautiful and consistent.', icon: 'Palette' },
+      ];
+  const leads = useSafeArray<any>(page.leads).length > 0
+    ? useSafeArray<any>(page.leads)
+    : [
+        { name: 'Department Lead', role: 'Health and Wellness Lead', specialty: 'Whole-person care', imageUrl: 'https://picsum.photos/seed/wellness-lead/400/400' },
+        { name: 'Department Lead', role: 'Content Lead', specialty: 'Storytelling and communication', imageUrl: 'https://picsum.photos/seed/content-lead/400/400' },
+        { name: 'Department Lead', role: 'Design Lead', specialty: 'Visual identity and assets', imageUrl: 'https://picsum.photos/seed/design-lead/400/400' },
+      ];
+  const departmentItems = departments.length > 0
+    ? departments
+    : [
+        {
+          title: 'Health and Wellness Department',
+          description: "Great communities don't just grow people intellectually, they care for the whole person. The Health & Wellness Department exists to ensure Inner Circle members are supported in their physical health, mental clarity, and emotional balance. From wellness resources to intentional check-ins, this department makes sure no one is running on empty while trying to build something great.",
+          activities: ['Wellness resources', 'Intentional check-ins', 'Physical health support', 'Mental clarity support'],
+          icon: 'Heart',
+          bg: 'bg-brand-primary/10',
+          color: 'text-brand-primary',
+          imageUrl: 'https://picsum.photos/seed/health-department/800/600',
+        },
+        {
+          title: 'Content Department',
+          description: 'The Content Department is responsible for capturing and communicating what Inner Circle is building through written pieces, social content, community resources, and everything in between.',
+          activities: ['Written content', 'Social content', 'Community resources', 'Internal communication'],
+          icon: 'FileText',
+          bg: 'bg-brand-primary/10',
+          color: 'text-brand-primary',
+          imageUrl: 'https://picsum.photos/seed/content-department/800/600',
+        },
+        {
+          title: 'Design Department',
+          description: 'First impressions matter, and so does every impression after that. The Design Department shapes the visual identity of Inner Circle crafting the graphics, assets, templates, and designs that represent the community with clarity and excellence.',
+          activities: ['Graphics and assets', 'Templates', 'Visual identity', 'Community design systems'],
+          icon: 'Palette',
+          bg: 'bg-brand-primary/10',
+          color: 'text-brand-primary',
+          imageUrl: 'https://picsum.photos/seed/design-department/800/600',
+        },
+      ];
   const contributionPoints = useSafeArray<string>(page.contributionPoints).length > 0
     ? useSafeArray<string>(page.contributionPoints)
     : [
@@ -41,16 +84,16 @@ export const DepartmentsPage = () => {
         </div>
         <div className="max-w-7xl mx-auto relative z-10 max-w-3xl">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-            <span className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-surface border border-border/50 text-foreground font-medium text-sm mb-8 shadow-sm">{page.heroBadge || 'The Ecosystem'}</span>
-            <h1 className="text-5xl md:text-7xl font-display font-medium text-foreground mb-8 leading-[1.05] tracking-tight">{page.heroTitle || 'Structured for'} <span className="text-brand-primary">{page.heroHighlight || 'Excellence'}</span>.</h1>
-            <p className="text-xl text-muted leading-relaxed font-normal">{page.heroDescription || 'Inner Circle is more than a group; it is a structured, intentional ecosystem.'}</p>
+            <span className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-surface border border-border/50 text-foreground font-medium text-sm mb-8 shadow-sm">{page.heroBadge || 'Departments'}</span>
+            <h1 className="text-5xl md:text-7xl font-display font-medium text-foreground mb-8 leading-[1.05] tracking-tight">{page.heroTitle || 'Serve with'} <span className="text-brand-primary">{page.heroHighlight || 'Purpose'}</span>.</h1>
+            <p className="text-xl text-muted leading-relaxed font-normal">{page.heroDescription || 'The departments of Inner Circle help us care for people well, communicate clearly and represent the community with excellence.'}</p>
           </motion.div>
         </div>
       </section>
 
       <section className="section-spacing px-6">
         <div className="max-w-7xl mx-auto space-y-32">
-          {departments.map((dept, i) => {
+          {departmentItems.map((dept, i) => {
             const Icon = getIcon(dept.icon);
             return (
               <motion.div key={dept.id || dept.title || i} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className={cn('grid lg:grid-cols-2 gap-16 items-center')}>

@@ -45,9 +45,9 @@ export const TestimonialsPage = () => {
 
         <div className="max-w-7xl mx-auto text-center relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-            <span className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-surface border border-border/50 text-foreground font-medium text-sm mb-8 shadow-sm">Impact & Transformation</span>
-            <h1 className="text-5xl md:text-7xl font-display font-medium text-foreground mb-8 leading-[1.05] tracking-tight">Real Stories of <br /> <span className="text-brand-primary">Intentional Growth.</span></h1>
-            <p className="text-xl text-muted leading-relaxed max-w-2xl mx-auto font-normal">Discover how The Inner Circle has empowered individuals to master discipline, sharpen their creativity, and lead with purpose.</p>
+            <span className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-surface border border-border/50 text-foreground font-medium text-sm mb-8 shadow-sm">Testimonials</span>
+            <h1 className="text-5xl md:text-7xl font-display font-medium text-foreground mb-8 leading-[1.05] tracking-tight">We Have Helped <br /> <span className="text-brand-primary">People Get Better.</span></h1>
+            <p className="text-xl text-muted leading-relaxed max-w-2xl mx-auto font-normal">Stories from Circlers who are growing in discipline, clarity, creativity and leadership.</p>
           </motion.div>
         </div>
       </section>
