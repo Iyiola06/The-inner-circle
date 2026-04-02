@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Layout } from './components/Layout';
 import { Hero } from './components/Hero';
 import { StatsSection } from './components/StatsSection';
@@ -19,13 +19,16 @@ import { FAQPage } from './components/FAQPage';
 import { CommunityDetailPage } from './components/CommunityDetailPage';
 import { LegalPage } from './components/LegalPage';
 import { AdminDashboard } from './components/admin/AdminDashboard';
+import { AdminLoginPage } from './components/admin/AdminLoginPage';
 import { ThemeProvider } from './lib/ThemeContext';
 import { SiteDataProvider, useCommunityBySlug, useSiteData } from './lib/site-data';
 import { useSeo } from './lib/seo';
+import { getSupabaseBrowserClient, hasSupabaseBrowserConfig } from './lib/supabase-browser';
 
 type View =
   | 'landing'
   | 'admin'
+  | 'admin-login'
   | 'about'
   | 'communities'
   | 'departments'
@@ -48,6 +51,13 @@ const seoMap: Record<View, { title: string; description: string; path: string; k
     description: 'The Inner Circle helps intentional leaders grow in discipline, spiritual depth, creativity, and excellence through communities, masterminds, and mentorship.',
     path: '/',
     keywords: ['faith-centered community', 'intentional leaders', 'leadership growth', 'masterminds', 'personal development'],
+  },
+  'admin-login': {
+    title: 'Admin Login',
+    description: 'Secure administrator login for The Inner Circle.',
+    path: '/admin-login',
+    keywords: ['admin login'],
+    noindex: true,
   },
   about: {
     title: 'About The Inner Circle',
@@ -148,6 +158,53 @@ const seoMap: Record<View, { title: string; description: string; path: string; k
   },
 };
 
+const pathToView = (pathname: string): View => {
+  const normalized = pathname.replace(/\/+$/, '') || '/';
+
+  switch (normalized) {
+    case '/':
+      return 'landing';
+    case '/admin':
+      return 'admin';
+    case '/admin-login':
+      return 'admin-login';
+    case '/about':
+      return 'about';
+    case '/communities':
+      return 'communities';
+    case '/departments':
+      return 'departments';
+    case '/testimonials':
+      return 'testimonials';
+    case '/join':
+      return 'join';
+    case '/leadership':
+      return 'leadership';
+    case '/faq':
+      return 'faq';
+    case '/communities/better-man':
+      return 'better-man';
+    case '/communities/innovation-lab':
+      return 'innovation-lab';
+    case '/communities/budding-ceos':
+      return 'budding-ceos';
+    case '/departments/health-wellness':
+      return 'health-wellness';
+    case '/departments/content':
+      return 'content';
+    case '/privacy':
+      return 'privacy';
+    case '/terms':
+      return 'terms';
+    case '/cookie-policy':
+      return 'cookie';
+    default:
+      return 'landing';
+  }
+};
+
+const viewToPath = (view: View) => seoMap[view]?.path || '/';
+
 const SeoManager = ({ view }: { view: View }) => {
   const { data } = useSiteData();
   const community = useCommunityBySlug(view);
@@ -229,15 +286,171 @@ const SeoManager = ({ view }: { view: View }) => {
 };
 
 function AppContent() {
-  const [view, setView] = useState<View>('landing');
+  const [view, setViewState] = useState<View>(() => pathToView(window.location.pathname));
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const [authStatus, setAuthStatus] = useState<'idle' | 'authenticated' | 'forbidden'>('idle');
+  const [adminEmail, setAdminEmail] = useState<string | null>(null);
+
+  const setView = useCallback((nextView: View, options?: { replace?: boolean }) => {
+    setViewState(nextView);
+    const nextPath = viewToPath(nextView);
+    const currentPath = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+
+    if (currentPath !== nextPath) {
+      if (options?.replace) {
+        window.history.replaceState({}, '', nextPath);
+      } else {
+        window.history.pushState({}, '', nextPath);
+      }
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  const syncAdminState = useCallback(async (): Promise<'idle' | 'authenticated' | 'forbidden'> => {
+    if (!hasSupabaseBrowserConfig()) {
+      setAuthStatus('idle');
+      setAdminEmail(null);
+      setIsAuthLoading(false);
+      return 'idle';
+    }
+
+    const supabase = getSupabaseBrowserClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.user) {
+      setAuthStatus('idle');
+      setAdminEmail(null);
+      setIsAuthLoading(false);
+      return 'idle';
+    }
+
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role, email')
+      .eq('id', session.user.id)
+      .maybeSingle();
+
+    const profileRecord = (profile as { role?: string | null; email?: string | null } | null) ?? null;
+    setAdminEmail(session.user.email || profileRecord?.email || null);
+    const nextStatus = profileRecord?.role === 'admin' ? 'authenticated' : 'forbidden';
+    setAuthStatus(nextStatus);
+    setIsAuthLoading(false);
+    return nextStatus;
+  }, []);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      setViewState(pathToView(window.location.pathname));
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  useEffect(() => {
+    void syncAdminState();
+
+    if (!hasSupabaseBrowserConfig()) {
+      return;
+    }
+
+    const supabase = getSupabaseBrowserClient();
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(() => {
+      void syncAdminState();
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [syncAdminState]);
+
+  const handleAdminLogin = useCallback(async (email: string, password: string) => {
+    if (!hasSupabaseBrowserConfig()) {
+      return { success: false, error: 'Supabase browser credentials are missing from the app environment.' };
+    }
+
+    setIsAuthLoading(true);
+    const supabase = getSupabaseBrowserClient();
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      setIsAuthLoading(false);
+      return { success: false, error: error.message };
+    }
+
+    const nextStatus = await syncAdminState();
+
+    if (nextStatus === 'forbidden') {
+      return { success: false, error: 'This account does not have admin access.' };
+    }
+
+    setView('admin', { replace: true });
+    return { success: true };
+  }, [authStatus, setView, syncAdminState]);
+
+  const handleAdminLogout = useCallback(async () => {
+    if (!hasSupabaseBrowserConfig()) {
+      return;
+    }
+
+    const supabase = getSupabaseBrowserClient();
+    await supabase.auth.signOut();
+    setAuthStatus('idle');
+    setAdminEmail(null);
+    setView('admin-login', { replace: true });
+  }, [setView]);
+
+  useEffect(() => {
+    if (!isAuthLoading && view === 'admin' && authStatus !== 'authenticated') {
+      setView('admin-login', { replace: true });
+    }
+  }, [authStatus, isAuthLoading, setView, view]);
+
+  const adminGate = isAuthLoading ? (
+    <section className="min-h-screen flex items-center justify-center px-6 bg-background">
+      <div className="text-center">
+        <p className="text-sm uppercase tracking-widest text-brand-primary font-medium mb-3">Admin Access</p>
+        <h1 className="text-3xl font-display font-medium text-foreground mb-3">Checking your session</h1>
+        <p className="text-muted">Please wait while we verify your administrator access.</p>
+      </div>
+    </section>
+  ) : authStatus === 'authenticated' ? (
+    <div className="relative">
+      <AdminDashboard />
+    </div>
+  ) : (
+    <Layout onViewChange={setView} currentView={view}>
+      <AdminLoginPage
+        onSubmit={handleAdminLogin}
+        isLoading={isAuthLoading}
+        authStatus={authStatus}
+        userEmail={adminEmail}
+        onLogout={handleAdminLogout}
+      />
+    </Layout>
+  );
 
   return (
     <>
       <SeoManager view={view} />
       {view === 'admin' ? (
-        <div className="relative">
-          <AdminDashboard />
-        </div>
+        adminGate
+      ) : view === 'admin-login' ? (
+        <Layout onViewChange={setView} currentView={view}>
+          <AdminLoginPage
+            onSubmit={handleAdminLogin}
+            isLoading={isAuthLoading}
+            authStatus={authStatus}
+            userEmail={adminEmail}
+            onLogout={handleAdminLogout}
+          />
+        </Layout>
       ) : (
         <Layout onViewChange={setView} currentView={view}>
           {view === 'landing' && (
