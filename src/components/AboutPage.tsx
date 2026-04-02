@@ -9,10 +9,43 @@ import { useSiteData, useSafeArray } from '../lib/site-data';
 export const AboutPage = () => {
   const { getContent, getWhatsappUrl } = useSiteData();
   const about = getContent<any>('about_page', {});
-  const visionCards = useSafeArray<any>(about.visionCards);
-  const coreValues = useSafeArray<string>(about.coreValues);
-  const leaders = useSafeArray<any>(about.leaders);
-  const philosophyItems = useSafeArray<any>(about.philosophyItems);
+  const storyParagraphs = useSafeArray<string>(about.storyParagraphs).length > 0
+    ? useSafeArray<string>(about.storyParagraphs)
+    : [
+        'Inner Circle began with a simple yet profound realization: in a world of noise and distraction, true impact belongs to the intentional.',
+        'What started as a small gathering has evolved into a faith-centered movement of individuals committed to growth, discipline, and impact.',
+        'Our journey is defined by the lives transformed through structure, accountability, and community.',
+      ];
+  const visionCards = useSafeArray<any>(about.visionCards).length > 0
+    ? useSafeArray<any>(about.visionCards)
+    : [
+        { title: 'Spiritually Grounded', description: 'Rooted in faith and timeless principles.', icon: 'Anchor', color: 'text-blue-500', bg: 'bg-blue-500/10' },
+        { title: 'Mentally Sharp', description: 'Developing wisdom, clarity, and discernment.', icon: 'Zap', color: 'text-purple-500', bg: 'bg-purple-500/10' },
+        { title: 'Community Oriented', description: 'Growing inside meaningful accountability.', icon: 'Users', color: 'text-amber-500', bg: 'bg-amber-500/10' },
+      ];
+  const coreValues = useSafeArray<string>(about.coreValues).length > 0
+    ? useSafeArray<string>(about.coreValues)
+    : ['Accountability', 'Consistency', 'Excellence', 'Faith'];
+  const leaders = useSafeArray<any>(about.leaders).length > 0
+    ? useSafeArray<any>(about.leaders)
+    : [
+        { name: 'Ogunjobi Niyiola', role: 'Founder & Visionary', imageUrl: 'https://picsum.photos/seed/leader1/400/500' },
+        { name: 'Sarah Adeyemi', role: 'Community Moderator', imageUrl: 'https://picsum.photos/seed/leader2/400/500' },
+      ];
+  const philosophyItems = useSafeArray<any>(about.philosophyItems).length > 0
+    ? useSafeArray<any>(about.philosophyItems)
+    : [
+        { label: 'Growth', icon: 'Sparkles' },
+        { label: 'Character', icon: 'Shield' },
+        { label: 'Impact', icon: 'Target' },
+        { label: 'Clarity', icon: 'BookOpen' },
+      ];
+  const philosophyParagraphs = useSafeArray<string>(about.philosophyParagraphs).length > 0
+    ? useSafeArray<string>(about.philosophyParagraphs)
+    : [
+        'We do not just gather; we grow. The Inner Circle is designed as a structured ecosystem for holistic development.',
+        'Our ecosystem provides the clarity to see your path, the competence to walk it, the character to sustain it, and the capacity to influence others.',
+      ];
 
   return (
     <div className="pt-20">
@@ -42,7 +75,7 @@ export const AboutPage = () => {
           <div className="space-y-8">
             <SectionHeading subtitle="The Genesis" title={about.storyTitle || 'A Purpose-Driven Movement'} align="left" />
             <div className="space-y-6 text-lg text-muted leading-relaxed font-normal">
-              {useSafeArray<string>(about.storyParagraphs).map((paragraph, index) => (
+              {storyParagraphs.map((paragraph, index) => (
                 <p key={paragraph + index}>{paragraph}</p>
               ))}
             </div>
@@ -128,7 +161,7 @@ export const AboutPage = () => {
               <div>
                 <SectionHeading subtitle="Our Philosophy" title={about.philosophyTitle || 'More Than a Group - An Ecosystem'} align="left" />
                 <div className="space-y-6 text-lg text-muted leading-relaxed mt-8 font-normal">
-                  {useSafeArray<string>(about.philosophyParagraphs).map((paragraph, index) => (
+                  {philosophyParagraphs.map((paragraph, index) => (
                     <p key={paragraph + index}>{paragraph}</p>
                   ))}
                 </div>
@@ -144,6 +177,18 @@ export const AboutPage = () => {
                   );
                 })}
               </div>
+            </div>
+            <div className="mt-10 grid sm:grid-cols-3 gap-4 relative z-10">
+              {[
+                { label: 'Core Values', value: `${coreValues.length}` },
+                { label: 'Leadership Voices', value: `${leaders.length}` },
+                { label: 'Growth Pillars', value: `${visionCards.length}` },
+              ].map((item) => (
+                <div key={item.label} className="rounded-2xl border border-border/50 bg-background/60 px-5 py-6 text-center shadow-sm">
+                  <p className="text-2xl font-display font-medium text-foreground">{item.value}</p>
+                  <p className="text-[10px] uppercase tracking-widest text-muted mt-2">{item.label}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>

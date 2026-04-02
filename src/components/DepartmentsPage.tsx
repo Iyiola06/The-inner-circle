@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { SectionHeading } from './Card';
 import { Button } from './Button';
-import { ArrowRight, CheckCircle2, MessageCircle } from 'lucide-react';
+import { ArrowRight, Briefcase, CheckCircle2, MessageCircle, Sparkles, Users } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { getIcon } from '../lib/icon-map';
 import { useSiteData, useSafeArray } from '../lib/site-data';
@@ -13,7 +13,24 @@ export const DepartmentsPage = () => {
   const departments = useSafeArray<any>(page.departments);
   const supportCards = useSafeArray<any>(page.supportCards);
   const leads = useSafeArray<any>(page.leads);
-  const contributionPoints = useSafeArray<string>(page.contributionPoints);
+  const contributionPoints = useSafeArray<string>(page.contributionPoints).length > 0
+    ? useSafeArray<string>(page.contributionPoints)
+    : [
+        'Contribute your skills to a global movement',
+        'Work alongside industry professionals',
+        'Build your portfolio with premium projects',
+        'Impact lives through specialized service',
+      ];
+  const contributionHighlights = useSafeArray<any>(page.contributionHighlights).length > 0
+    ? useSafeArray<any>(page.contributionHighlights)
+    : [
+        { label: 'Open Tracks', value: '3', icon: Briefcase },
+        { label: 'Lead Mentors', value: `${leads.length || 3}`, icon: Users },
+        { label: 'Live Projects', value: '12+', icon: Sparkles },
+      ];
+  const contributionRoles = useSafeArray<string>(page.contributionRoles).length > 0
+    ? useSafeArray<string>(page.contributionRoles)
+    : ['Writers', 'Designers', 'Strategists', 'Community Builders', 'Wellness Leads', 'Operators'];
 
   return (
     <div className="pt-20">
@@ -109,10 +126,26 @@ export const DepartmentsPage = () => {
       <section className="section-spacing px-6 bg-brand-primary/5">
         <div className="max-w-5xl mx-auto">
           <div className="bg-surface rounded-3xl p-12 md:p-20 border border-border/50 shadow-premium relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-brand-primary/10 rounded-full blur-[80px]" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-brand-deep/10 rounded-full blur-[80px]" />
             <div className="grid lg:grid-cols-2 gap-12 items-center relative z-10">
-              <div>
+              <div className="space-y-8">
                 <SectionHeading subtitle="Contribute" title={page.contributionTitle || 'Serve with Purpose'} align="left" />
                 <p className="text-lg text-muted leading-relaxed mt-6 font-normal">{page.contributionDescription || 'We invite members into purposeful contribution across our departments.'}</p>
+                <div className="grid sm:grid-cols-3 gap-4">
+                  {contributionHighlights.map((item, i) => {
+                    const Icon = typeof item.icon === 'string' ? getIcon(item.icon) : item.icon;
+                    return (
+                      <div key={item.label || i} className="rounded-2xl border border-border/50 bg-background/70 px-5 py-6 shadow-sm">
+                        <div className="w-10 h-10 rounded-xl bg-brand-primary/10 text-brand-primary flex items-center justify-center mb-4">
+                          <Icon className="w-5 h-5" />
+                        </div>
+                        <p className="text-2xl font-display font-medium text-foreground">{item.value}</p>
+                        <p className="text-[10px] uppercase tracking-widest text-muted mt-2">{item.label}</p>
+                      </div>
+                    );
+                  })}
+                </div>
                 <div className="mt-8">
                   <Button variant="primary" className="gap-2" onClick={() => { window.open(getWhatsappUrl(), '_blank'); }}>
                     Apply to Join a Department
@@ -120,13 +153,37 @@ export const DepartmentsPage = () => {
                   </Button>
                 </div>
               </div>
-              <div className="space-y-4">
-                {contributionPoints.map((text, i) => (
-                  <div key={text + i} className="flex items-center gap-3 p-4 rounded-2xl bg-surface border border-border/50 shadow-sm">
-                    <CheckCircle2 className="w-5 h-5 text-brand-primary" />
-                    <span className="font-medium text-foreground text-sm">{text}</span>
+
+              <div className="space-y-6">
+                <div className="rounded-3xl border border-border/50 bg-background/70 p-8 shadow-sm">
+                  <p className="text-xs uppercase tracking-widest text-brand-primary font-medium mb-5">Why Join a Department</p>
+                  <div className="space-y-4">
+                    {contributionPoints.map((text, i) => (
+                      <div key={text + i} className="flex items-start gap-3">
+                        <div className="w-8 h-8 rounded-xl bg-brand-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                          <CheckCircle2 className="w-4 h-4 text-brand-primary" />
+                        </div>
+                        <span className="font-medium text-foreground text-sm leading-relaxed">{text}</span>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </div>
+
+                <div className="rounded-3xl border border-border/50 bg-gradient-to-br from-brand-primary/10 via-transparent to-transparent p-8 shadow-sm">
+                  <p className="text-xs uppercase tracking-widest text-muted font-medium mb-5">Teams We Are Building</p>
+                  <div className="flex flex-wrap gap-3">
+                    {contributionRoles.map((role, i) => (
+                      <span key={role + i} className="px-4 py-2 rounded-full bg-surface border border-border/50 text-sm font-medium text-foreground">
+                        {role}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="mt-8 pt-6 border-t border-border/40">
+                    <p className="text-sm text-muted leading-relaxed">
+                      Members do not just volunteer here. They ship meaningful work, sharpen their craft, and grow inside a disciplined support system.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

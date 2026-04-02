@@ -9,9 +9,30 @@ import { getIcon } from '../lib/icon-map';
 export const CommunitiesPage = () => {
   const [openFaq, setOpenFaq] = React.useState<number | null>(0);
   const { data, getContent, formatCurrency, getWhatsappUrl } = useSiteData();
-  const benefits = useSafeArray<any>(getContent('community_benefits', []));
-  const faqs = useSafeArray<any>(getContent('community_faqs', []));
-  const comparisonRows = useSafeArray<any>(getContent('community_comparison_rows', []));
+  const benefits = useSafeArray<any>(getContent('community_benefits', [])).length > 0
+    ? useSafeArray<any>(getContent('community_benefits', []))
+    : [
+        { title: 'Growth Support', description: 'Continuous resources and mentorship to keep your momentum high.', icon: 'Sparkles' },
+        { title: 'Accountability', description: 'A disciplined circle that helps you follow through.', icon: 'Shield' },
+        { title: 'Practical Development', description: 'Real frameworks you can apply immediately.', icon: 'Target' },
+      ];
+  const faqs = useSafeArray<any>(getContent('community_faqs', [])).length > 0
+    ? useSafeArray<any>(getContent('community_faqs', []))
+    : [
+        { question: 'How do I join a community?', answer: 'Choose your preferred circle and our team will guide you through the next step.' },
+        { question: 'Can I join more than one community?', answer: 'Yes, if the tracks align with your current goals and capacity.' },
+      ];
+  const comparisonRows = useSafeArray<any>(getContent('community_comparison_rows', [])).length > 0
+    ? useSafeArray<any>(getContent('community_comparison_rows', []))
+    : [
+        { label: 'Primary Focus', values: ['Self-Leadership', 'Creative Strategy', 'Business Operations'] },
+        { label: 'Ideal Stage', values: ['Personal Mastery', 'Idea / Concept', 'Active Venture'] },
+      ];
+  const ecosystemStats = [
+    { label: 'Active Circles', value: `${data.communities.length}` },
+    { label: 'Visible Benefits', value: `${benefits.length}` },
+    { label: 'FAQ Blocks', value: `${faqs.length}` },
+  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -98,6 +119,15 @@ export const CommunitiesPage = () => {
           <div className="text-center mb-20">
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-medium text-foreground mb-6 tracking-tight">Compare Circles</h2>
             <p className="text-lg text-muted font-normal leading-relaxed max-w-2xl mx-auto">A side-by-side look at our flagship communities to help you decide which path aligns with your current goals.</p>
+          </div>
+
+          <div className="grid sm:grid-cols-3 gap-4 mb-10">
+            {ecosystemStats.map((item) => (
+              <div key={item.label} className="rounded-2xl border border-border/50 bg-surface px-5 py-6 text-center shadow-sm">
+                <p className="text-2xl font-display font-medium text-foreground">{item.value}</p>
+                <p className="text-[10px] uppercase tracking-widest text-muted mt-2">{item.label}</p>
+              </div>
+            ))}
           </div>
 
           <div className="overflow-x-auto pb-8">

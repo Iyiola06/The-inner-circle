@@ -11,9 +11,23 @@ export const TestimonialsPage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const { data, getContent, getWhatsappUrl } = useSiteData();
   const testimonialStats = useTestimonialStats();
-  const featuredStories = data.testimonials.filter((testimonial) => testimonial.is_featured);
-  const videoSpotlights = useSafeArray<any>(getContent('testimonial_videos', []));
-  const trustPoints = useSafeArray<string>(getContent('testimonial_trust_points', []));
+  const featuredStories = data.testimonials.filter((testimonial) => testimonial.is_featured).length > 0
+    ? data.testimonials.filter((testimonial) => testimonial.is_featured)
+    : data.testimonials.slice(0, 2);
+  const videoSpotlights = useSafeArray<any>(getContent('testimonial_videos', [])).length > 0
+    ? useSafeArray<any>(getContent('testimonial_videos', []))
+    : [
+        { title: 'Member breakthrough', imageUrl: 'https://picsum.photos/seed/video1/800/450' },
+        { title: 'Leadership story', imageUrl: 'https://picsum.photos/seed/video2/800/450' },
+        { title: 'Community growth', imageUrl: 'https://picsum.photos/seed/video3/800/450' },
+      ];
+  const trustPoints = useSafeArray<string>(getContent('testimonial_trust_points', [])).length > 0
+    ? useSafeArray<string>(getContent('testimonial_trust_points', []))
+    : [
+        'Purpose-driven growth ecosystem',
+        'Faith-centered culture of excellence',
+        'Structured accountability and support',
+      ];
   const categories = ['All', ...Array.from(new Set(data.testimonials.map((testimonial) => testimonial.category).filter(Boolean)))];
   const filteredTestimonials = activeCategory === 'All' ? data.testimonials : data.testimonials.filter((testimonial) => testimonial.category === activeCategory);
 

@@ -7,8 +7,20 @@ import { useSiteData, useSafeArray } from '../lib/site-data';
 export const BrandOverview = () => {
   const { getContent } = useSiteData();
   const content = getContent<any>('brand_overview', {});
-  const visionValues = useSafeArray<any>(content.visionValues);
-  const memberAvatars = useSafeArray<string>(content.memberAvatars);
+  const visionValues = useSafeArray<any>(content.visionValues).length > 0
+    ? useSafeArray<any>(content.visionValues)
+    : [
+        { icon: 'ShieldCheck', label: 'Spiritually grounded' },
+        { icon: 'Target', label: 'Mentally sharp' },
+        { icon: 'Zap', label: 'Skillfully equipped' },
+        { icon: 'Users', label: 'Community-oriented' },
+      ];
+  const memberAvatars = useSafeArray<string>(content.memberAvatars).length > 0
+    ? useSafeArray<string>(content.memberAvatars)
+    : ['/logo1.jpeg', '/logo2.jpeg', '/logo1.jpeg'];
+  const missionBullets = useSafeArray<string>(content.missionBullets).length > 0
+    ? useSafeArray<string>(content.missionBullets)
+    : ['Faith-centered growth', 'Disciplined accountability', 'Creative excellence'];
 
   return (
     <section id="overview" className="section-spacing px-6 relative overflow-hidden">
@@ -116,6 +128,13 @@ export const BrandOverview = () => {
               <p className="text-white/80 text-lg leading-relaxed font-normal">
                 {content.missionPreview || 'To raise a disciplined circle of purpose-driven individuals equipped with clarity, competence, character, and capacity to influence their spaces through faith, creativity, and service.'}
               </p>
+              <div className="flex flex-wrap gap-3">
+                {missionBullets.map((item, i) => (
+                  <span key={item + i} className="px-4 py-2 rounded-full border border-white/20 bg-white/10 text-xs uppercase tracking-widest font-medium">
+                    {item}
+                  </span>
+                ))}
+              </div>
               <div className="pt-6">
                 <div className="flex items-center gap-4">
                   <div className="flex -space-x-3">
