@@ -1,38 +1,14 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { SectionHeading } from './Card';
 import { cn } from '../lib/utils';
-
-const faqs = [
-  {
-    question: 'What is The Inner Circle?',
-    answer: 'The Inner Circle is a purpose-driven, faith-centered community and movement of intentional individuals committed to growth, discipline, and impact.',
-  },
-  {
-    question: 'How do I join a community?',
-    answer: 'You can join any of our featured communities (Better Man, Innovation Lab, Budding CEOs) by clicking the "Join via WhatsApp" button on their respective cards. Our team will guide you through the payment and onboarding steps.',
-  },
-  {
-    question: 'Is it only for religious people?',
-    answer: 'While we are faith-centered and built on strong spiritual values, we welcome anyone who is intentional about their growth and respects our core principles of discipline and excellence.',
-  },
-  {
-    question: 'What are the membership fees used for?',
-    answer: 'Membership fees go towards maintaining the community platform, organizing weekly masterminds, providing resources, and supporting our global leadership team.',
-  },
-  {
-    question: 'Can I join multiple communities?',
-    answer: 'Yes, you can join multiple communities if you feel they align with your goals. Each community has its own specific focus and specialized track.',
-  },
-  {
-    question: 'What happens after I pay?',
-    answer: 'Once your payment is confirmed via WhatsApp, you will be added to the community portal and receive an onboarding kit with all the information you need to get started.',
-  },
-];
+import { useSiteData, useSafeArray } from '../lib/site-data';
 
 export const FAQSection = () => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const { getContent } = useSiteData();
+  const faqs = useSafeArray<{ question: string; answer: string }>(getContent('home_faqs', []));
 
   return (
     <section id="faq" className="section-spacing px-6">
@@ -46,7 +22,7 @@ export const FAQSection = () => {
         <div className="space-y-4">
           {faqs.map((faq, i) => (
             <div
-              key={i}
+              key={faq.question}
               className={cn(
                 'rounded-2xl border border-border/50 bg-surface transition-all duration-300 overflow-hidden',
                 activeIndex === i ? 'border-brand-primary/30 shadow-sm' : 'hover:border-brand-primary/20 hover:shadow-sm'
@@ -64,7 +40,7 @@ export const FAQSection = () => {
                   <ChevronDown className="w-4 h-4" />
                 </div>
               </button>
-              
+
               <AnimatePresence>
                 {activeIndex === i && (
                   <motion.div

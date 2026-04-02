@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Layout } from './components/Layout';
 import { Hero } from './components/Hero';
 import { StatsSection } from './components/StatsSection';
@@ -20,128 +20,264 @@ import { CommunityDetailPage } from './components/CommunityDetailPage';
 import { LegalPage } from './components/LegalPage';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 import { ThemeProvider } from './lib/ThemeContext';
-import { cn } from './lib/utils';
+import { SiteDataProvider, useCommunityBySlug, useSiteData } from './lib/site-data';
+import { useSeo } from './lib/seo';
 
-export default function App() {
-  const [view, setView] = useState<
-    'landing' | 'admin' | 'about' | 'communities' | 'departments' | 'testimonials' | 'join' | 
-    'leadership' | 'faq' | 'better-man' | 'innovation-lab' | 'budding-ceos' | 'health-wellness' | 'content' |
-    'privacy' | 'terms' | 'cookie'
-  >('landing');
+type View =
+  | 'landing'
+  | 'admin'
+  | 'about'
+  | 'communities'
+  | 'departments'
+  | 'testimonials'
+  | 'join'
+  | 'leadership'
+  | 'faq'
+  | 'better-man'
+  | 'innovation-lab'
+  | 'budding-ceos'
+  | 'health-wellness'
+  | 'content'
+  | 'privacy'
+  | 'terms'
+  | 'cookie';
 
-  if (view === 'admin') {
-    return (
-      <ThemeProvider>
-        <div className="relative">
-          <AdminDashboard />
-          {/*
-          <button 
-            onClick={() => setView('landing')}
-            className="fixed bottom-8 right-8 px-6 py-3 bg-brand-primary text-white rounded-full font-bold shadow-2xl z-50 hover:bg-brand-deep transition-all"
-          >
-            Back to Website
-          </button>
-          */}
-        </div>
-      </ThemeProvider>
-    );
-  }
+const seoMap: Record<View, { title: string; description: string; path: string; keywords: string[]; noindex?: boolean }> = {
+  landing: {
+    title: 'Faith-Centered Community for Intentional Leaders',
+    description: 'The Inner Circle helps intentional leaders grow in discipline, spiritual depth, creativity, and excellence through communities, masterminds, and mentorship.',
+    path: '/',
+    keywords: ['faith-centered community', 'intentional leaders', 'leadership growth', 'masterminds', 'personal development'],
+  },
+  about: {
+    title: 'About The Inner Circle',
+    description: 'Learn about The Inner Circle, our mission, values, and the leadership behind our faith-centered growth ecosystem.',
+    path: '/about',
+    keywords: ['about the inner circle', 'mission', 'values', 'faith-centered leadership'],
+  },
+  communities: {
+    title: 'Communities',
+    description: 'Explore The Inner Circle communities for discipline, innovation, entrepreneurship, wellness, and purposeful growth.',
+    path: '/communities',
+    keywords: ['communities', 'innovation lab', 'better man', 'budding CEOs', 'growth communities'],
+  },
+  departments: {
+    title: 'Departments',
+    description: 'See how The Inner Circle departments support wellness, content, design, and structured excellence across the ecosystem.',
+    path: '/departments',
+    keywords: ['departments', 'wellness', 'content team', 'design team', 'community support'],
+  },
+  testimonials: {
+    title: 'Testimonials',
+    description: 'Read real transformation stories and testimonials from members of The Inner Circle ecosystem.',
+    path: '/testimonials',
+    keywords: ['testimonials', 'member stories', 'community impact', 'leadership transformation'],
+  },
+  join: {
+    title: 'Join The Inner Circle',
+    description: 'Apply to join The Inner Circle and start your onboarding into a disciplined, faith-centered growth ecosystem.',
+    path: '/join',
+    keywords: ['join the inner circle', 'membership application', 'community onboarding'],
+  },
+  leadership: {
+    title: 'Leadership Team',
+    description: 'Meet the leadership team guiding The Inner Circle community, culture, and vision.',
+    path: '/leadership',
+    keywords: ['leadership team', 'founder', 'community leadership'],
+  },
+  faq: {
+    title: 'Frequently Asked Questions',
+    description: 'Find answers about membership, onboarding, communities, and how The Inner Circle works.',
+    path: '/faq',
+    keywords: ['FAQ', 'membership questions', 'community questions', 'onboarding FAQ'],
+  },
+  'better-man': {
+    title: 'Better Man Community',
+    description: 'Discover the Better Man community for men pursuing discipline, character, and intentional leadership.',
+    path: '/communities/better-man',
+    keywords: ['better man', 'mens community', 'discipline', 'character building'],
+  },
+  'innovation-lab': {
+    title: 'Innovation Lab Community',
+    description: 'Explore the Innovation Lab community for creatives, builders, and problem-solvers shaping the future with purpose.',
+    path: '/communities/innovation-lab',
+    keywords: ['innovation lab', 'creative community', 'builders', 'tech and creativity'],
+  },
+  'budding-ceos': {
+    title: 'Budding CEOs Community',
+    description: 'Join the Budding CEOs community for founders and entrepreneurs building with strategy, structure, and purpose.',
+    path: '/communities/budding-ceos',
+    keywords: ['budding CEOs', 'entrepreneur community', 'founders', 'business leadership'],
+  },
+  'health-wellness': {
+    title: 'Health and Wellness',
+    description: 'Learn how The Inner Circle supports health, wellness, and holistic growth across the ecosystem.',
+    path: '/departments/health-wellness',
+    keywords: ['health and wellness', 'wellness department', 'holistic growth'],
+  },
+  content: {
+    title: 'Content Department',
+    description: 'See how The Inner Circle content department shapes stories, resources, and communication across the ecosystem.',
+    path: '/departments/content',
+    keywords: ['content department', 'community content', 'storytelling'],
+  },
+  privacy: {
+    title: 'Privacy Policy',
+    description: 'Read the privacy policy for The Inner Circle.',
+    path: '/privacy',
+    keywords: ['privacy policy'],
+  },
+  terms: {
+    title: 'Terms and Conditions',
+    description: 'Review the terms and conditions for using The Inner Circle.',
+    path: '/terms',
+    keywords: ['terms and conditions'],
+  },
+  cookie: {
+    title: 'Cookie Policy',
+    description: 'Review the cookie policy for The Inner Circle.',
+    path: '/cookie-policy',
+    keywords: ['cookie policy'],
+  },
+  admin: {
+    title: 'Admin Dashboard',
+    description: 'Internal administration area for The Inner Circle.',
+    path: '/admin',
+    keywords: ['admin'],
+    noindex: true,
+  },
+};
+
+const SeoManager = ({ view }: { view: View }) => {
+  const { data } = useSiteData();
+  const community = useCommunityBySlug(view);
+  const seo = seoMap[view] || seoMap.landing;
+
+  const structuredData = useMemo(() => {
+    const base = [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        name: 'The Inner Circle',
+        url: window.location.origin,
+        logo: `${window.location.origin}/logo1.jpeg`,
+        sameAs: [],
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: 'The Inner Circle',
+        url: window.location.origin,
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: `${window.location.origin}/?q={search_term_string}`,
+          'query-input': 'required name=search_term_string',
+        },
+      },
+    ];
+
+    if (view === 'faq') {
+      return [
+        ...base,
+        {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: (data.content.faq_categories || []).flatMap((category: any) =>
+            (category.items || []).map((item: any) => ({
+              '@type': 'Question',
+              name: item.question,
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: item.answer,
+              },
+            })),
+          ),
+        },
+      ];
+    }
+
+    if (community) {
+      return [
+        ...base,
+        {
+          '@context': 'https://schema.org',
+          '@type': 'Service',
+          name: community.name,
+          description: community.description,
+          provider: {
+            '@type': 'Organization',
+            name: 'The Inner Circle',
+          },
+          areaServed: 'Global',
+        },
+      ];
+    }
+
+    return base;
+  }, [community, data.content.faq_categories, view]);
+
+  useSeo({
+    title: seo.title,
+    description: seo.description,
+    path: seo.path,
+    keywords: seo.keywords,
+    noindex: seo.noindex,
+    structuredData,
+  });
+
+  return null;
+};
+
+function AppContent() {
+  const [view, setView] = useState<View>('landing');
 
   return (
-    <Layout onViewChange={setView} currentView={view}>
-      {/* View Switcher for Demo - Commented out per user request
-      <div className="fixed bottom-8 right-8 z-50 flex flex-col gap-4">
-        <div className="flex gap-2 flex-wrap justify-end max-w-md">
-          <button 
-            onClick={() => setView('landing')}
-            className={cn(
-              "px-4 py-2 rounded-full font-medium text-sm shadow-lg transition-all",
-              view === 'landing' ? "bg-brand-primary text-white" : "bg-white text-brand-primary border border-brand-primary/20 hover:border-brand-primary/50"
-            )}
-          >
-            Home
-          </button>
-          <button 
-            onClick={() => setView('about')}
-            className={cn(
-              "px-4 py-2 rounded-full font-medium text-sm shadow-lg transition-all",
-              view === 'about' ? "bg-brand-primary text-white" : "bg-white text-brand-primary border border-brand-primary/20 hover:border-brand-primary/50"
-            )}
-          >
-            About
-          </button>
-          <button 
-            onClick={() => setView('communities')}
-            className={cn(
-              "px-4 py-2 rounded-full font-medium text-sm shadow-lg transition-all",
-              view === 'communities' ? "bg-brand-primary text-white" : "bg-white text-brand-primary border border-brand-primary/20 hover:border-brand-primary/50"
-            )}
-          >
-            Communities
-          </button>
-          <button 
-            onClick={() => setView('departments')}
-            className={cn(
-              "px-4 py-2 rounded-full font-medium text-sm shadow-lg transition-all",
-              view === 'departments' ? "bg-brand-primary text-white" : "bg-white text-brand-primary border border-brand-primary/20 hover:border-brand-primary/50"
-            )}
-          >
-            Departments
-          </button>
-          <button 
-            onClick={() => setView('testimonials')}
-            className={cn(
-              "px-4 py-2 rounded-full font-medium text-sm shadow-lg transition-all",
-              view === 'testimonials' ? "bg-brand-primary text-white" : "bg-white text-brand-primary border border-brand-primary/20 hover:border-brand-primary/50"
-            )}
-          >
-            Testimonials
-          </button>
-          <button 
-            onClick={() => setView('join')}
-            className={cn(
-              "px-4 py-2 rounded-full font-medium text-sm shadow-lg transition-all",
-              view === 'join' ? "bg-brand-primary text-white" : "bg-white text-brand-primary border border-brand-primary/20 hover:border-brand-primary/50"
-            )}
-          >
-            Join
-          </button>
+    <>
+      <SeoManager view={view} />
+      {view === 'admin' ? (
+        <div className="relative">
+          <AdminDashboard />
         </div>
-        <button 
-          onClick={() => setView('admin')}
-          className="px-6 py-3 bg-brand-primary text-white rounded-full font-medium text-sm shadow-2xl hover:bg-brand-deep transition-all self-end"
-        >
-          Admin Portal
-        </button>
-      </div>
-      */}
+      ) : (
+        <Layout onViewChange={setView} currentView={view}>
+          {view === 'landing' && (
+            <>
+              <Hero />
+              <StatsSection />
+              <BrandOverview />
+              <CommunitiesSection />
+              <LeadershipSection />
+              <TestimonialSection />
+              <DepartmentsSection />
+              <FAQSection />
+              <FinalCTA />
+            </>
+          )}
+          {view === 'about' && <AboutPage />}
+          {view === 'communities' && <CommunitiesPage />}
+          {view === 'departments' && <DepartmentsPage />}
+          {view === 'testimonials' && <TestimonialsPage />}
+          {view === 'join' && <JoinPage />}
+          {view === 'leadership' && <LeadershipPage onBack={() => setView('landing')} />}
+          {view === 'faq' && <FAQPage onBack={() => setView('landing')} />}
+          {['better-man', 'innovation-lab', 'budding-ceos', 'health-wellness', 'content'].includes(view) && (
+            <CommunityDetailPage communityId={view} onBack={() => setView('landing')} />
+          )}
+          {['privacy', 'terms', 'cookie'].includes(view) && (
+            <LegalPage type={view as any} onBack={() => setView('landing')} />
+          )}
+        </Layout>
+      )}
+    </>
+  );
+}
 
-      {view === 'landing' && (
-        <>
-          <Hero />
-          <StatsSection />
-          <BrandOverview />
-          <CommunitiesSection />
-          <LeadershipSection />
-          <TestimonialSection />
-          <DepartmentsSection />
-          <FAQSection />
-          <FinalCTA />
-        </>
-      )}
-      {view === 'about' && <AboutPage />}
-      {view === 'communities' && <CommunitiesPage />}
-      {view === 'departments' && <DepartmentsPage />}
-      {view === 'testimonials' && <TestimonialsPage />}
-      {view === 'join' && <JoinPage />}
-      {view === 'leadership' && <LeadershipPage onBack={() => setView('landing')} />}
-      {view === 'faq' && <FAQPage onBack={() => setView('landing')} />}
-      {['better-man', 'innovation-lab', 'budding-ceos', 'health-wellness', 'content'].includes(view) && (
-        <CommunityDetailPage communityId={view} onBack={() => setView('landing')} />
-      )}
-      {['privacy', 'terms', 'cookie'].includes(view) && (
-        <LegalPage type={view as any} onBack={() => setView('landing')} />
-      )}
-    </Layout>
+export default function App() {
+  return (
+    <ThemeProvider>
+      <SiteDataProvider>
+        <AppContent />
+      </SiteDataProvider>
+    </ThemeProvider>
   );
 }

@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Block duplicate internal build artifacts if ever exposed
+Disallow: /src/
+Disallow: /node_modules/
+Disallow: /dist/

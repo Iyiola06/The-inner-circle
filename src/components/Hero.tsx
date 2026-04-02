@@ -2,12 +2,10 @@ import React from 'react';
 import { Button } from './Button';
 import { motion } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
-import { getWhatsAppUrl, WHATSAPP_MESSAGES } from '../lib/constants';
 
 export const Hero = () => {
   return (
     <section className="relative min-h-screen flex items-center justify-center pt-40 pb-32 px-6 overflow-hidden">
-      {/* Background Elements - Subtler */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] bg-brand-primary/[0.02] rounded-full blur-[120px]" />
         <div className="absolute bottom-[-20%] right-[-10%] w-[70%] h-[70%] bg-brand-deep/[0.02] rounded-full blur-[120px]" />
@@ -30,8 +28,8 @@ export const Hero = () => {
             transition={{ duration: 1, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
             className="text-6xl md:text-8xl lg:text-[6.5rem] font-display font-medium text-foreground mb-8 leading-[0.95] tracking-[-0.03em]"
           >
-            Circlers <br />
-            <span className="text-brand-primary italic font-serif pr-4 font-light">don’t</span> <br />
+            Intentional leaders <br />
+            <span className="text-brand-primary italic font-serif pr-4 font-light">do not</span> <br />
             blend in.
           </motion.h1>
 
@@ -39,9 +37,9 @@ export const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="text-muted text-lg md:text-xl mb-12 max-w-md mx-auto lg:mx-0 leading-relaxed font-normal"
+            className="text-muted text-lg md:text-xl mb-12 max-w-xl mx-auto lg:mx-0 leading-relaxed font-normal"
           >
-            A high-impact community for intentional leaders committed to spiritual mastery and world-class excellence.
+            The Inner Circle is a high-impact, faith-centered community for intentional leaders pursuing spiritual mastery, disciplined growth, creativity, and world-class excellence.
           </motion.p>
 
           <motion.div
@@ -50,11 +48,16 @@ export const Hero = () => {
             transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col sm:flex-row items-center gap-8 justify-center lg:justify-start"
           >
-            <Button variant="primary" size="lg" className="w-full sm:w-auto gap-3 group px-8">
-              Apply for Membership 
+            <Button
+              variant="primary"
+              size="lg"
+              className="w-full sm:w-auto gap-3 group px-8"
+              onClick={() => document.getElementById('communities')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              Apply for Membership
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Button>
-            <button 
+            <button
               onClick={() => document.getElementById('communities')?.scrollIntoView({ behavior: 'smooth' })}
               className="text-sm font-medium text-foreground hover:text-brand-primary transition-colors flex items-center gap-2"
             >
@@ -72,7 +75,7 @@ export const Hero = () => {
           <div className="relative z-10 rounded-2xl overflow-hidden aspect-[4/5] group">
             <img
               src="https://picsum.photos/seed/innercircle/1000/1250"
-              alt="The Inner Circle Community"
+              alt="Members of The Inner Circle community in a premium leadership and growth environment"
               className="w-full h-full object-cover"
               referrerPolicy="no-referrer"
             />
@@ -84,4 +87,3 @@ export const Hero = () => {
     </section>
   );
 };
-

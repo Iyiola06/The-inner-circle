@@ -1,20 +1,17 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { SectionHeading } from './Card';
-import { ShieldCheck, Target, Zap, Users, Compass } from 'lucide-react';
-
-const visionValues = [
-  { icon: ShieldCheck, label: 'Spiritually grounded' },
-  { icon: Target, label: 'Mentally sharp' },
-  { icon: Zap, label: 'Skillfully equipped' },
-  { icon: Users, label: 'Community-oriented' },
-  { icon: Compass, label: 'Purpose-aligned' },
-];
+import { Compass } from 'lucide-react';
+import { getIcon } from '../lib/icon-map';
+import { useSiteData, useSafeArray } from '../lib/site-data';
 
 export const BrandOverview = () => {
+  const { getContent } = useSiteData();
+  const content = getContent<any>('brand_overview', {});
+  const visionValues = useSafeArray<any>(content.visionValues);
+  const memberAvatars = useSafeArray<string>(content.memberAvatars);
+
   return (
     <section id="overview" className="section-spacing px-6 relative overflow-hidden">
-      {/* Subtle Background Accent */}
       <div className="absolute top-0 right-0 w-1/3 h-full bg-brand-primary/[0.02] -skew-x-12 translate-x-1/2 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto relative z-10">
@@ -28,24 +25,24 @@ export const BrandOverview = () => {
           >
             <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-surface border border-border/50 text-foreground font-medium text-xs mb-4 shadow-sm">
               <div className="w-1.5 h-1.5 rounded-full bg-brand-primary animate-pulse" />
-              Our Essence
+              {content.badge || 'Our Essence'}
             </div>
             <h2 className="text-5xl md:text-6xl lg:text-7xl font-display font-medium text-foreground leading-[1.05] tracking-tight">
-              A Movement of <br />
-              <span className="text-brand-primary">Intentional Souls.</span>
+              {content.title || 'A Movement of'} <br />
+              <span className="text-brand-primary">{content.highlight || 'Intentional Souls.'}</span>
             </h2>
             <p className="text-muted text-lg md:text-xl leading-relaxed font-normal">
-              Inner Circle is a purpose-driven, faith-centered ecosystem for individuals committed to spiritual depth, mental clarity, and world-class impact.
+              {content.description || 'Inner Circle is a purpose-driven, faith-centered ecosystem for individuals committed to spiritual depth, mental clarity, and world-class impact.'}
             </p>
-            
+
             <div className="pt-6 grid grid-cols-2 gap-8">
               <div>
-                <p className="text-4xl font-display font-medium text-foreground mb-1">100%</p>
-                <p className="text-[10px] font-medium text-muted uppercase tracking-widest">Commitment</p>
+                <p className="text-4xl font-display font-medium text-foreground mb-1">{content.commitmentValue || '100%'}</p>
+                <p className="text-[10px] font-medium text-muted uppercase tracking-widest">{content.commitmentLabel || 'Commitment'}</p>
               </div>
               <div>
-                <p className="text-4xl font-display font-medium text-foreground mb-1">Elite</p>
-                <p className="text-[10px] font-medium text-muted uppercase tracking-widest">Standard</p>
+                <p className="text-4xl font-display font-medium text-foreground mb-1">{content.standardValue || 'Elite'}</p>
+                <p className="text-[10px] font-medium text-muted uppercase tracking-widest">{content.standardLabel || 'Standard'}</p>
               </div>
             </div>
           </motion.div>
@@ -58,9 +55,9 @@ export const BrandOverview = () => {
             className="relative"
           >
             <div className="aspect-square rounded-3xl overflow-hidden border border-border/50 shadow-premium group">
-              <img 
-                src="https://picsum.photos/seed/vision/1000/1000" 
-                alt="Vision" 
+              <img
+                src={content.imageUrl || 'https://picsum.photos/seed/vision/1000/1000'}
+                alt="Vision"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
                 referrerPolicy="no-referrer"
               />
@@ -69,7 +66,7 @@ export const BrandOverview = () => {
               <div className="w-12 h-1 bg-brand-primary mb-6 rounded-full" />
               <p className="text-brand-primary font-medium text-[10px] uppercase tracking-widest mb-4">Our Vision</p>
               <p className="text-foreground font-medium leading-relaxed text-lg italic font-serif">
-                "To raise a disciplined circle of purpose-driven individuals equipped with clarity, competence, and character."
+                "{content.visionQuote || 'To raise a disciplined circle of purpose-driven individuals equipped with clarity, competence, and character.'}"
               </p>
             </div>
           </motion.div>
@@ -84,43 +81,46 @@ export const BrandOverview = () => {
               </h3>
               <p className="text-muted font-normal">The pillars that define our collective excellence.</p>
             </div>
-            
+
             <div className="grid sm:grid-cols-2 gap-6">
-              {visionValues.map((value, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1, duration: 0.8 }}
-                  className="flex items-center gap-5 p-5 rounded-2xl bg-surface border border-border/50 hover:border-brand-primary/30 hover:shadow-sm transition-all group cursor-default"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-brand-primary/5 flex items-center justify-center text-brand-primary group-hover:bg-brand-primary group-hover:text-white transition-all duration-500 shadow-sm">
-                    <value.icon className="w-5 h-5" />
-                  </div>
-                  <span className="font-medium text-foreground text-sm">{value.label}</span>
-                </motion.div>
-              ))}
+              {visionValues.map((value, i) => {
+                const Icon = getIcon(value.icon);
+                return (
+                  <motion.div
+                    key={value.label || i}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1, duration: 0.8 }}
+                    className="flex items-center gap-5 p-5 rounded-2xl bg-surface border border-border/50 hover:border-brand-primary/30 hover:shadow-sm transition-all group cursor-default"
+                  >
+                    <div className="w-12 h-12 rounded-xl bg-brand-primary/5 flex items-center justify-center text-brand-primary group-hover:bg-brand-primary group-hover:text-white transition-all duration-500 shadow-sm">
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <span className="font-medium text-foreground text-sm">{value.label}</span>
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
 
           <div className="space-y-10 p-12 md:p-16 rounded-3xl bg-brand-primary text-white shadow-premium relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-[100px] -mr-48 -mt-48 group-hover:bg-white/20 transition-colors duration-1000" />
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-brand-deep/50 rounded-full blur-[80px] -ml-32 -mb-32" />
-            
+
             <div className="relative z-10 space-y-8">
               <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-xl flex items-center justify-center border border-white/20">
                 <Compass className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-3xl md:text-4xl font-display font-medium">Mission Preview</h3>
               <p className="text-white/80 text-lg leading-relaxed font-normal">
-                To raise a disciplined circle of purpose-driven individuals equipped with clarity, competence, character, and capacity to influence their spaces through faith, creativity, and service.
+                {content.missionPreview || 'To raise a disciplined circle of purpose-driven individuals equipped with clarity, competence, character, and capacity to influence their spaces through faith, creativity, and service.'}
               </p>
               <div className="pt-6">
                 <div className="flex items-center gap-4">
                   <div className="flex -space-x-3">
-                    {['/logo1.jpeg', '/logo2.jpeg', '/logo1.jpeg'].map((src, i) => (
-                      <div key={i} className="w-10 h-10 rounded-full border-2 border-brand-primary overflow-hidden shadow-sm">
+                    {memberAvatars.map((src, i) => (
+                      <div key={src + i} className="w-10 h-10 rounded-full border-2 border-brand-primary overflow-hidden shadow-sm">
                         <img src={src} alt="Member" className="w-full h-full object-cover" />
                       </div>
                     ))}

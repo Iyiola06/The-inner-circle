@@ -2,36 +2,12 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { Button } from './Button';
 import { ArrowRight } from 'lucide-react';
-import { getWhatsAppUrl, WHATSAPP_MESSAGES } from '../lib/constants';
-
-const communities = [
-  {
-    title: 'Better Man',
-    price: '₦15,000',
-    period: 'per year',
-    description: 'A space for men to grow in character, competence, and spiritual maturity.',
-    whatsappMessage: WHATSAPP_MESSAGES.BETTER_MAN,
-    image: 'https://picsum.photos/seed/man/800/1000',
-  },
-  {
-    title: 'Innovation Lab',
-    price: '₦20,500',
-    period: 'per year',
-    description: 'For creatives and problem-solvers looking to build the future through faith.',
-    whatsappMessage: WHATSAPP_MESSAGES.INNOVATION_LAB,
-    image: 'https://picsum.photos/seed/innovation/800/1000',
-  },
-  {
-    title: 'Budding CEOs',
-    price: '₦28,000',
-    period: 'per year',
-    description: 'Equipping the next generation of business leaders with kingdom principles.',
-    whatsappMessage: WHATSAPP_MESSAGES.BUDDING_CEOS,
-    image: 'https://picsum.photos/seed/ceo/800/1000',
-  },
-];
+import { useSiteData } from '../lib/site-data';
 
 export const CommunitiesSection = () => {
+  const { data, formatCurrency, getWhatsappUrl } = useSiteData();
+  const communities = data.communities.slice(0, 3);
+
   return (
     <section id="communities" className="py-32 px-6">
       <div className="max-w-7xl mx-auto">
@@ -44,8 +20,8 @@ export const CommunitiesSection = () => {
               Join a specialized community designed to help you excel in your specific area of focus. Each circle offers curated resources, expert guidance, and an elite network.
             </p>
           </div>
-          <button 
-            onClick={() => { window.open(getWhatsAppUrl(WHATSAPP_MESSAGES.GENERAL), '_blank'); }}
+          <button
+            onClick={() => { window.open(getWhatsappUrl(), '_blank'); }}
             className="hidden md:flex items-center gap-2 text-sm font-medium text-brand-primary hover:text-brand-deep transition-colors"
           >
             View All Details <ArrowRight className="w-4 h-4" />
@@ -55,7 +31,7 @@ export const CommunitiesSection = () => {
         <div className="grid lg:grid-cols-3 gap-10 lg:gap-12">
           {communities.map((community, i) => (
             <motion.div
-              key={i}
+              key={community.id}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -63,9 +39,9 @@ export const CommunitiesSection = () => {
               className="group flex flex-col"
             >
               <div className="relative aspect-[3/4] mb-8 overflow-hidden rounded-2xl bg-muted/5 border border-border/30">
-                <img 
-                  src={community.image} 
-                  alt={community.title} 
+                <img
+                  src={community.image_url || community.hero_image_url || 'https://picsum.photos/seed/community/800/1000'}
+                  alt={community.name}
                   className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                   referrerPolicy="no-referrer"
                 />
@@ -73,21 +49,21 @@ export const CommunitiesSection = () => {
               </div>
 
               <div className="flex flex-col flex-grow">
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-2xl font-display font-medium text-foreground">{community.title}</h3>
+                <div className="flex justify-between items-start mb-4 gap-6">
+                  <h3 className="text-2xl font-display font-medium text-foreground">{community.name}</h3>
                   <div className="text-right">
-                    <div className="text-lg font-medium text-foreground">{community.price}</div>
-                    <div className="text-xs text-muted uppercase tracking-widest mt-1">{community.period}</div>
+                    <div className="text-lg font-medium text-foreground">{formatCurrency(community.price)}</div>
+                    <div className="text-xs text-muted uppercase tracking-widest mt-1">{community.price_period || 'per year'}</div>
                   </div>
                 </div>
-                
+
                 <p className="text-muted leading-relaxed mb-8 text-sm font-normal flex-grow">
-                  {community.description}
+                  {community.summary || community.description}
                 </p>
-                
+
                 <div className="pt-6 border-t border-border/40">
-                  <button 
-                    onClick={() => { window.open(getWhatsAppUrl(community.whatsappMessage), '_blank'); }}
+                  <button
+                    onClick={() => { window.open(getWhatsappUrl(community.whatsapp_message || undefined), '_blank'); }}
                     className="flex items-center justify-between w-full text-sm font-medium text-foreground group/btn hover:text-brand-primary transition-colors"
                   >
                     <span>Request Access</span>

@@ -1,18 +1,12 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Users, Globe, Award, Zap } from 'lucide-react';
-
-const stats = [
-  { label: 'Circlers', value: '30+', icon: Users },
-  { label: 'Countries', value: '2', icon: Globe },
-  { label: 'Weekly Masterminds', value: '100%', icon: Zap },
-  { label: 'Success Rate', value: '98%', icon: Award },
-];
+import { useHomepageStats } from '../lib/site-data';
 
 export const StatsSection = () => {
+  const stats = useHomepageStats();
+
   return (
     <section className="py-24 px-6 bg-brand-primary text-white relative overflow-hidden">
-      {/* Decorative Background */}
       <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-white rounded-full blur-[120px]" />
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-white rounded-full blur-[120px]" />
@@ -22,7 +16,7 @@ export const StatsSection = () => {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
           {stats.map((stat, i) => (
             <motion.div
-              key={i}
+              key={stat.label}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
