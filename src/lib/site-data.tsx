@@ -238,10 +238,12 @@ export const useHomepageStats = () => {
     ).size;
     const weeklyMasterminds = Number(metrics.weeklyMasterminds || 0);
     const satisfaction = Number(metrics.satisfaction || 0);
+    const circlersDisplay = typeof metrics.circlersDisplay === 'string' ? metrics.circlersDisplay : formatCount(activeMembers);
+    const countriesDisplay = typeof metrics.countriesDisplay === 'string' ? metrics.countriesDisplay : formatCount(countries);
 
     return [
-      { label: 'Circlers', value: formatCount(activeMembers), icon: Users },
-      { label: 'Countries', value: formatCount(countries), icon: Globe },
+      { label: 'Circlers', value: circlersDisplay, icon: Users },
+      { label: 'Countries', value: countriesDisplay, icon: Globe },
       { label: 'Weekly Masterminds', value: weeklyMasterminds ? `${weeklyMasterminds}` : 'N/A', icon: Zap },
       { label: 'Satisfaction', value: satisfaction ? `${satisfaction}%` : 'N/A', icon: Heart },
     ];
@@ -261,10 +263,12 @@ export const useTestimonialStats = () => {
     ).size;
     const growthRate = Number(metrics.growthRate || 0);
     const satisfaction = Number(metrics.satisfaction || 0);
+    const circlersDisplay = typeof metrics.circlersDisplay === 'string' ? metrics.circlersDisplay : formatCount(activeMembers);
+    const countriesDisplay = typeof metrics.countriesDisplay === 'string' ? metrics.countriesDisplay : formatCount(countries);
 
     return [
-      { label: 'Circlers', value: formatCount(activeMembers), icon: Users },
-      { label: 'Countries', value: formatCount(countries), icon: Globe },
+      { label: 'Circlers', value: circlersDisplay, icon: Users },
+      { label: 'Countries', value: countriesDisplay, icon: Globe },
       { label: 'Growth Rate', value: growthRate ? `${growthRate}%` : 'N/A', icon: Zap },
       { label: 'Satisfaction', value: satisfaction ? `${satisfaction}%` : 'N/A', icon: Heart },
     ];

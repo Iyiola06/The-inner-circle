@@ -8,6 +8,7 @@ import { getSupabaseBrowserClient, hasSupabaseBrowserConfig } from '../../lib/su
 
 const tabs = [
   { id: 'overview', label: 'Overview' },
+  { id: 'homepage', label: 'Homepage' },
   { id: 'members', label: 'Members' },
   { id: 'communities', label: 'Communities' },
   { id: 'announcements', label: 'Announcements' },
@@ -29,6 +30,8 @@ export const AdminDashboard = () => {
   const [announcementDrafts, setAnnouncementDrafts] = useState<Record<string, any>>({});
   const [testimonialDrafts, setTestimonialDrafts] = useState<Record<string, any>>({});
   const [communityDrafts, setCommunityDrafts] = useState<Record<string, any>>({});
+  const [heroContentDraft, setHeroContentDraft] = useState<Record<string, any>>({});
+  const [homepageMetricsDraft, setHomepageMetricsDraft] = useState<Record<string, any>>({});
   const [savingKey, setSavingKey] = useState<string | null>(null);
   const [saveState, setSaveState] = useState<SaveState>(null);
   const { data, formatCurrency, refresh, isLoading } = useSiteData();
@@ -82,7 +85,28 @@ export const AdminDashboard = () => {
         ]),
       ),
     );
-  }, [data.announcements, data.communities, data.testimonials]);
+
+    const heroContent = (data.content.hero as Record<string, any> | undefined) || {};
+    setHeroContentDraft({
+      title: heroContent.title || "Circlers don't",
+      highlight: heroContent.highlight || 'blend in,',
+      subtitleLine: heroContent.subtitleLine || 'they stand out',
+      description: heroContent.description || 'We are a purpose-driven individuals committed to personal growth, spiritual development and intentional living.',
+      primaryCta: heroContent.primaryCta || 'Become a Circler',
+      secondaryCta: heroContent.secondaryCta || 'Explore Communities',
+      statOne: Array.isArray(heroContent.stats) ? heroContent.stats[0] || '30+ Circlers' : '30+ Circlers',
+      statTwo: Array.isArray(heroContent.stats) ? heroContent.stats[1] || '2 countries' : '2 countries',
+    });
+
+    const homepageMetrics = (data.content.homepage_metrics as Record<string, any> | undefined) || {};
+    setHomepageMetricsDraft({
+      circlersDisplay: homepageMetrics.circlersDisplay || '30+',
+      countriesDisplay: homepageMetrics.countriesDisplay || '2',
+      weeklyMasterminds: homepageMetrics.weeklyMasterminds || 3,
+      satisfaction: homepageMetrics.satisfaction || 98,
+      growthRate: homepageMetrics.growthRate || 100,
+    });
+  }, [data.announcements, data.communities, data.content.hero, data.content.homepage_metrics, data.testimonials]);
 
   const activeMembers = useMemo(
     () => data.members.filter((member) => member.status?.toLowerCase() === 'active'),
@@ -170,6 +194,38 @@ export const AdminDashboard = () => {
     }
   };
 
+  const saveSiteContent = async (key: string, value: Record<string, any>, successMessage: string) => {
+    if (!hasSupabaseBrowserConfig()) {
+      setSaveState({ type: 'error', message: 'Supabase browser configuration is missing.' });
+      return;
+    }
+
+    setSavingKey(`site_content:${key}`);
+    setSaveState(null);
+
+    try {
+      const supabase = getSupabaseBrowserClient();
+      const { error } = await ((supabase.from('site_content') as any).upsert(
+        { key, value, updated_at: new Date().toISOString() },
+        { onConflict: 'key' },
+      ));
+
+      if (error) {
+        throw error;
+      }
+
+      await refresh();
+      setSaveState({ type: 'success', message: successMessage });
+    } catch (error) {
+      setSaveState({
+        type: 'error',
+        message: error instanceof Error ? error.message : 'Unable to save homepage content.',
+      });
+    } finally {
+      setSavingKey(null);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background px-6 py-10">
       <div className="max-w-7xl mx-auto space-y-10">
@@ -196,7 +252,7 @@ export const AdminDashboard = () => {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 rounded-3xl border border-border/50 bg-surface p-5">
           <div>
             <p className="text-sm font-medium text-foreground">Admin changes save directly to Supabase.</p>
-            <p className="text-xs uppercase tracking-widest text-muted mt-2">Read-only members | editable content records</p>
+            <p className="text-xs uppercase tracking-widest text-muted mt-2">Homepage, communities, announcements and testimonials are editable here</p>
           </div>
           <div className="flex items-center gap-3">
             {saveState && (
@@ -265,6 +321,83 @@ export const AdminDashboard = () => {
                 </div>
               </Card>
             </div>
+          </div>
+        )}
+
+        {activeTab === 'homepage' && (
+          <div className="grid xl:grid-cols-2 gap-6">
+            <Card className="p-8">
+              <h2 className="text-2xl font-display font-medium text-foreground mb-6">Hero Content</h2>
+              <div className="grid gap-4">
+                <input className={fieldClassName} value={heroContentDraft.title || ''} onChange={(event) => setHeroContentDraft((current) => ({ ...current, title: event.target.value }))} placeholder="Hero title line 1" />
+                <input className={fieldClassName} value={heroContentDraft.highlight || ''} onChange={(event) => setHeroContentDraft((current) => ({ ...current, highlight: event.target.value }))} placeholder="Hero highlight" />
+                <input className={fieldClassName} value={heroContentDraft.subtitleLine || ''} onChange={(event) => setHeroContentDraft((current) => ({ ...current, subtitleLine: event.target.value }))} placeholder="Hero title line 3" />
+                <textarea className={`${fieldClassName} min-h-28`} value={heroContentDraft.description || ''} onChange={(event) => setHeroContentDraft((current) => ({ ...current, description: event.target.value }))} placeholder="Hero description" />
+                <input className={fieldClassName} value={heroContentDraft.primaryCta || ''} onChange={(event) => setHeroContentDraft((current) => ({ ...current, primaryCta: event.target.value }))} placeholder="Primary CTA" />
+                <input className={fieldClassName} value={heroContentDraft.secondaryCta || ''} onChange={(event) => setHeroContentDraft((current) => ({ ...current, secondaryCta: event.target.value }))} placeholder="Secondary CTA" />
+                <input className={fieldClassName} value={heroContentDraft.statOne || ''} onChange={(event) => setHeroContentDraft((current) => ({ ...current, statOne: event.target.value }))} placeholder="Hero stat 1" />
+                <input className={fieldClassName} value={heroContentDraft.statTwo || ''} onChange={(event) => setHeroContentDraft((current) => ({ ...current, statTwo: event.target.value }))} placeholder="Hero stat 2" />
+              </div>
+              <div className="mt-6 flex justify-end">
+                <Button
+                  variant="primary"
+                  className="gap-2"
+                  disabled={savingKey === 'site_content:hero'}
+                  onClick={() =>
+                    void saveSiteContent(
+                      'hero',
+                      {
+                        title: heroContentDraft.title,
+                        highlight: heroContentDraft.highlight,
+                        subtitleLine: heroContentDraft.subtitleLine,
+                        description: heroContentDraft.description,
+                        primaryCta: heroContentDraft.primaryCta,
+                        secondaryCta: heroContentDraft.secondaryCta,
+                        stats: [heroContentDraft.statOne, heroContentDraft.statTwo].filter(Boolean),
+                      },
+                      'Hero content updated.',
+                    )
+                  }
+                >
+                  {savingKey === 'site_content:hero' ? <LoaderCircle className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                  Save Hero
+                </Button>
+              </div>
+            </Card>
+
+            <Card className="p-8">
+              <h2 className="text-2xl font-display font-medium text-foreground mb-6">Homepage Stats</h2>
+              <div className="grid gap-4">
+                <input className={fieldClassName} value={homepageMetricsDraft.circlersDisplay || ''} onChange={(event) => setHomepageMetricsDraft((current) => ({ ...current, circlersDisplay: event.target.value }))} placeholder="Circlers display e.g. 30+" />
+                <input className={fieldClassName} value={homepageMetricsDraft.countriesDisplay || ''} onChange={(event) => setHomepageMetricsDraft((current) => ({ ...current, countriesDisplay: event.target.value }))} placeholder="Countries display e.g. 2" />
+                <input className={fieldClassName} type="number" value={homepageMetricsDraft.weeklyMasterminds ?? 0} onChange={(event) => setHomepageMetricsDraft((current) => ({ ...current, weeklyMasterminds: Number(event.target.value) }))} placeholder="Weekly masterminds" />
+                <input className={fieldClassName} type="number" value={homepageMetricsDraft.satisfaction ?? 0} onChange={(event) => setHomepageMetricsDraft((current) => ({ ...current, satisfaction: Number(event.target.value) }))} placeholder="Satisfaction" />
+                <input className={fieldClassName} type="number" value={homepageMetricsDraft.growthRate ?? 0} onChange={(event) => setHomepageMetricsDraft((current) => ({ ...current, growthRate: Number(event.target.value) }))} placeholder="Growth rate" />
+              </div>
+              <div className="mt-6 flex justify-end">
+                <Button
+                  variant="primary"
+                  className="gap-2"
+                  disabled={savingKey === 'site_content:homepage_metrics'}
+                  onClick={() =>
+                    void saveSiteContent(
+                      'homepage_metrics',
+                      {
+                        circlersDisplay: homepageMetricsDraft.circlersDisplay,
+                        countriesDisplay: homepageMetricsDraft.countriesDisplay,
+                        weeklyMasterminds: Number(homepageMetricsDraft.weeklyMasterminds || 0),
+                        satisfaction: Number(homepageMetricsDraft.satisfaction || 0),
+                        growthRate: Number(homepageMetricsDraft.growthRate || 0),
+                      },
+                      'Homepage stats updated.',
+                    )
+                  }
+                >
+                  {savingKey === 'site_content:homepage_metrics' ? <LoaderCircle className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                  Save Homepage Stats
+                </Button>
+              </div>
+            </Card>
           </div>
         )}
 
