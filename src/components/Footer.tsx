@@ -22,9 +22,8 @@ export const Footer = ({ onViewChange }: FooterProps) => {
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
         <div className="space-y-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-brand-primary rounded-xl flex items-center justify-center text-white font-medium text-lg shadow-sm">
-              IC
-            </div>
+            <img src="/logo1.jpeg" alt="The Inner Circle Logo" className="w-10 h-10 object-cover rounded-xl dark:hidden shadow-sm" />
+            <img src="/logo2.jpeg" alt="The Inner Circle Logo" className="w-10 h-10 object-cover rounded-xl hidden dark:block shadow-sm" />
             <span className="font-display font-medium text-xl tracking-tight text-foreground">
               The Inner Circle
             </span>

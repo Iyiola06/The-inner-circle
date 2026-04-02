@@ -1652,18 +1652,18 @@ export const AdminDashboard = () => {
                         <div className="grid md:grid-cols-2 gap-10">
                           <div className="space-y-5">
                             <label className="text-xs font-medium text-muted uppercase tracking-widest">Main Logo (Light)</label>
-                            <div className="h-48 rounded-3xl border-2 border-dashed border-border flex flex-col items-center justify-center bg-white group hover:border-brand-primary/30 transition-all cursor-pointer relative overflow-hidden">
+                            <div className="h-48 rounded-3xl border-2 border-border flex flex-col items-center justify-center bg-white group hover:border-brand-primary/30 transition-all cursor-pointer relative overflow-hidden">
                               <div className="absolute inset-0 bg-brand-primary/0 group-hover:bg-brand-primary/5 transition-all" />
-                              <Plus className="w-8 h-8 text-muted mb-3 group-hover:scale-110 transition-transform" />
-                              <span className="text-xs font-medium text-muted uppercase tracking-widest">Upload SVG</span>
+                              <img src="/logo1.jpeg" alt="Main Logo (Light)" className="w-24 h-24 object-contain mb-3 group-hover:scale-110 transition-transform" />
+                              <span className="text-xs font-medium text-muted uppercase tracking-widest">Change Image</span>
                             </div>
                           </div>
                           <div className="space-y-5">
                             <label className="text-xs font-medium text-muted uppercase tracking-widest">Main Logo (Dark)</label>
-                            <div className="h-48 rounded-3xl border-2 border-dashed border-border flex flex-col items-center justify-center bg-[#0B1220] group hover:border-brand-primary/30 transition-all cursor-pointer relative overflow-hidden">
+                            <div className="h-48 rounded-3xl border-2 border-border flex flex-col items-center justify-center bg-[#0B1220] group hover:border-brand-primary/30 transition-all cursor-pointer relative overflow-hidden">
                               <div className="absolute inset-0 bg-brand-primary/0 group-hover:bg-brand-primary/5 transition-all" />
-                              <Plus className="w-8 h-8 text-muted mb-3 group-hover:scale-110 transition-transform" />
-                              <span className="text-xs font-medium text-muted uppercase tracking-widest">Upload SVG</span>
+                              <img src="/logo2.jpeg" alt="Main Logo (Dark)" className="w-24 h-24 object-contain mb-3 group-hover:scale-110 transition-transform" />
+                              <span className="text-xs font-medium text-muted uppercase tracking-widest">Change Image</span>
                             </div>
                           </div>
                         </div>

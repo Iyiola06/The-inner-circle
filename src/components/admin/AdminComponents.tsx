@@ -74,9 +74,8 @@ export const AdminSidebar = ({ activeTab, onTabChange, isOpen, onClose }: AdminS
       )}>
         <div className="flex items-center justify-between mb-16 px-2">
           <div className="flex items-center gap-4 group cursor-pointer">
-            <div className="w-12 h-12 bg-brand-primary rounded-2xl flex items-center justify-center text-white font-medium text-xl shadow-xl  group-hover:scale-110 transition-transform">
-              IC
-            </div>
+            <img src="/logo1.jpeg" alt="Inner Circle Logo" className="w-12 h-12 object-cover rounded-2xl dark:hidden shadow-xl group-hover:scale-110 transition-transform" />
+            <img src="/logo2.jpeg" alt="Inner Circle Logo" className="w-12 h-12 object-cover rounded-2xl hidden dark:block shadow-xl group-hover:scale-110 transition-transform" />
             <div>
               <span className="font-display font-medium text-xl text-foreground block leading-none tracking-tight">Inner Circle</span>
               <span className="text-xs font-medium text-brand-primary uppercase tracking-widest mt-1 block">Admin Portal</span>

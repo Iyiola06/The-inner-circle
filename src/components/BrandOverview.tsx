@@ -119,9 +119,9 @@ export const BrandOverview = () => {
               <div className="pt-6">
                 <div className="flex items-center gap-4">
                   <div className="flex -space-x-3">
-                    {[1, 2, 3].map((i) => (
-                      <div key={i} className="w-10 h-10 rounded-full border-2 border-brand-primary bg-brand-deep flex items-center justify-center text-[10px] font-medium shadow-sm">
-                        IC
+                    {['/logo1.jpeg', '/logo2.jpeg', '/logo1.jpeg'].map((src, i) => (
+                      <div key={i} className="w-10 h-10 rounded-full border-2 border-brand-primary overflow-hidden shadow-sm">
+                        <img src={src} alt="Member" className="w-full h-full object-cover" />
                       </div>
                     ))}
                   </div>

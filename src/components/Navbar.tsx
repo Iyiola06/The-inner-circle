@@ -64,9 +64,8 @@ export const Navbar = ({ onViewChange, currentView }: NavbarProps) => {
           onClick={() => handleNavClick('landing', '#')}
           className="flex items-center gap-3 group"
         >
-          <div className="w-9 h-9 bg-foreground rounded-lg flex items-center justify-center text-background font-medium text-lg transition-transform group-hover:scale-105">
-            IC
-          </div>
+          <img src="/logo1.jpeg" alt="The Inner Circle Logo" className="w-9 h-9 object-cover rounded-lg dark:hidden transition-transform group-hover:scale-105" />
+          <img src="/logo2.jpeg" alt="The Inner Circle Logo" className="w-9 h-9 object-cover rounded-lg hidden dark:block transition-transform group-hover:scale-105" />
           <span className="font-display font-medium text-lg tracking-tight text-foreground hidden sm:block">
             The Inner Circle
           </span>
@@ -141,9 +140,8 @@ export const Navbar = ({ onViewChange, currentView }: NavbarProps) => {
             >
               <div className="p-6 flex items-center justify-between border-b border-border/50">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 bg-foreground rounded-lg flex items-center justify-center text-background font-medium text-lg">
-                    IC
-                  </div>
+                  <img src="/logo1.jpeg" alt="The Inner Circle Logo" className="w-9 h-9 object-cover rounded-lg dark:hidden" />
+                  <img src="/logo2.jpeg" alt="The Inner Circle Logo" className="w-9 h-9 object-cover rounded-lg hidden dark:block" />
                   <span className="font-display font-medium text-lg text-foreground tracking-tight">The Inner Circle</span>
                 </div>
                 <button 
