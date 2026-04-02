@@ -2,11 +2,14 @@ import React from 'react';
 import { Button } from './Button';
 import { motion } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
-import { useSiteData } from '../lib/site-data';
+import { useSafeArray, useSiteData } from '../lib/site-data';
 
 export const Hero = () => {
   const { getContent } = useSiteData();
   const hero = getContent<any>('hero', {});
+  const heroStats = useSafeArray<string>(hero.stats).length > 0
+    ? useSafeArray<string>(hero.stats)
+    : ['30+ Circlers', '2 countries'];
 
   return (
     <section className="relative min-h-screen flex items-center justify-center pt-40 pb-32 px-6 overflow-hidden">
@@ -75,9 +78,12 @@ export const Hero = () => {
             transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-8 text-sm font-medium text-foreground/80"
           >
-            <span className="px-4 py-2 rounded-full border border-border/40 bg-surface">30+ Circlers</span>
-            <span className="hidden sm:inline text-border">|</span>
-            <span className="px-4 py-2 rounded-full border border-border/40 bg-surface">2 countries</span>
+            {heroStats.map((stat, index) => (
+              <React.Fragment key={stat + index}>
+                {index > 0 && <span className="hidden sm:inline text-border">|</span>}
+                <span className="px-4 py-2 rounded-full border border-border/40 bg-surface">{stat}</span>
+              </React.Fragment>
+            ))}
           </motion.div>
         </div>
 
