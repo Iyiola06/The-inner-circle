@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, MessageCircle } from 'lucide-react';
+import { Menu, X, MessageCircle, ChevronDown } from 'lucide-react';
 import { Button } from './Button';
 import { ThemeToggle } from './ThemeToggle';
 import { cn } from '../lib/utils';
@@ -25,14 +25,20 @@ export const Navbar = ({ onViewChange, currentView }: NavbarProps) => {
 
   const navLinks = [
     { name: 'Overview', href: '#overview', view: 'landing' },
-    { name: 'About', href: '#about', view: 'about' },
+    { 
+      name: 'About', href: '#about', view: 'about',
+      children: [
+        { name: 'Leadership', href: '#leadership', view: 'leadership' },
+        { name: 'Testimonials', href: '#testimonials', view: 'testimonials' },
+      ]
+    },
     { name: 'Communities', href: '#communities', view: 'communities' },
     { name: 'Departments', href: '#departments', view: 'departments' },
-    { name: 'Testimonials', href: '#testimonials', view: 'testimonials' },
     { name: 'Join', href: '#join', view: 'join' },
-    { name: 'Leadership', href: '#leadership', view: 'leadership' },
     { name: 'FAQ', href: '#faq', view: 'faq' },
   ];
+
+  const mobileNavLinks = navLinks.flatMap(link => link.children ? [link, ...link.children] : [link]);
 
   const handleNavClick = (view: string, href: string) => {
     if (onViewChange) {
@@ -74,22 +80,64 @@ export const Navbar = ({ onViewChange, currentView }: NavbarProps) => {
         {/* Desktop Links */}
         <div className="hidden lg:flex items-center gap-8">
           {navLinks.map((link) => (
-            <button
-              key={link.name}
-              onClick={() => handleNavClick(link.view, link.href)}
-              className={cn(
-                "text-sm font-medium transition-colors relative group/link",
-                currentView === link.view ? "text-foreground" : "text-foreground/60 hover:text-foreground"
-              )}
-            >
-              {link.name}
-              {currentView === link.view && (
-                <motion.span 
-                  layoutId="nav-indicator"
-                  className="absolute -bottom-1.5 left-0 right-0 h-[2px] bg-foreground rounded-full"
-                />
-              )}
-            </button>
+            link.children ? (
+              <div key={link.name} className="relative group">
+                <button
+                  onClick={() => handleNavClick(link.view, link.href)}
+                  className={cn(
+                    "flex items-center gap-1 text-sm font-medium transition-colors relative group/link p-2 -m-2",
+                    currentView === link.view || link.children.some(child => currentView === child.view) ? "text-foreground" : "text-foreground/60 hover:text-foreground"
+                  )}
+                >
+                  {link.name}
+                  <ChevronDown className="w-4 h-4 opacity-70 group-hover:rotate-180 transition-transform duration-300" />
+                  {(currentView === link.view || link.children.some(child => currentView === child.view)) && (
+                    <motion.span 
+                      layoutId="nav-indicator"
+                      className="absolute bottom-0 left-2 right-2 h-[2px] bg-foreground rounded-full"
+                    />
+                  )}
+                </button>
+                
+                {/* Dropdown Menu */}
+                <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 pb-2">
+                  <div className="flex flex-col min-w-[200px] bg-surface/95 backdrop-blur-xl border border-border/50 rounded-2xl shadow-xl overflow-hidden glass p-2 gap-1">
+                    {link.children.map((child) => (
+                      <button
+                        key={child.name}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleNavClick(child.view, child.href);
+                        }}
+                        className={cn(
+                          "text-left px-4 py-2.5 rounded-xl text-sm font-medium transition-colors",
+                          currentView === child.view ? "text-brand-primary bg-brand-primary/10" : "text-foreground/70 hover:text-brand-primary hover:bg-muted/10"
+                        )}
+                      >
+                        {child.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <button
+                key={link.name}
+                onClick={() => handleNavClick(link.view, link.href)}
+                className={cn(
+                  "p-2 -m-2 text-sm font-medium transition-colors relative group/link",
+                  currentView === link.view ? "text-foreground" : "text-foreground/60 hover:text-foreground"
+                )}
+              >
+                {link.name}
+                {currentView === link.view && (
+                  <motion.span 
+                    layoutId="nav-indicator"
+                    className="absolute bottom-0 left-2 right-2 h-[2px] bg-foreground rounded-full"
+                  />
+                )}
+              </button>
+            )
           ))}
         </div>
 
@@ -153,7 +201,7 @@ export const Navbar = ({ onViewChange, currentView }: NavbarProps) => {
               </div>
 
               <div className="flex-grow overflow-y-auto p-6 space-y-2">
-                {navLinks.map((link, i) => (
+                {mobileNavLinks.map((link, i) => (
                   <motion.button
                     key={link.name}
                     initial={{ opacity: 0, y: 10 }}
