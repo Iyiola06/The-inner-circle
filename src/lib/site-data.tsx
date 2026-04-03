@@ -37,6 +37,17 @@ export interface MemberRecord {
   country?: string | null;
 }
 
+export interface JoinRequestRecord {
+  id: string;
+  community_id?: string | null;
+  full_name: string;
+  email: string;
+  phone: string;
+  status?: string | null;
+  notes?: string | null;
+  created_at?: string | null;
+}
+
 export interface TestimonialRecord {
   id: string;
   name: string;
@@ -69,6 +80,7 @@ export interface AnnouncementRecord {
 export interface SiteData {
   communities: CommunityRecord[];
   members: MemberRecord[];
+  join_requests: JoinRequestRecord[];
   testimonials: TestimonialRecord[];
   announcements: AnnouncementRecord[];
   content: Record<string, any>;
@@ -87,6 +99,7 @@ interface SiteDataContextValue {
 const emptyData: SiteData = {
   communities: [],
   members: [],
+  join_requests: [],
   testimonials: [],
   announcements: [],
   content: {},
@@ -106,10 +119,11 @@ const fetchSiteData = async (): Promise<SiteData> => {
 
   const supabase = getSupabaseBrowserClient();
 
-  const [communitiesResult, membersResult, testimonialsResult, announcementsResult, contentResult] =
+  const [communitiesResult, membersResult, joinRequestsResult, testimonialsResult, announcementsResult, contentResult] =
     await Promise.all([
       supabase.from('communities').select('*').eq('is_active', true).order('sort_order', { ascending: true }),
       supabase.from('members').select('*').order('joined_at', { ascending: false }),
+      supabase.from('join_requests').select('*').order('created_at', { ascending: false }),
       supabase
         .from('testimonials')
         .select('*')
@@ -122,6 +136,7 @@ const fetchSiteData = async (): Promise<SiteData> => {
   const errors = [
     communitiesResult.error,
     membersResult.error,
+    joinRequestsResult.error,
     testimonialsResult.error,
     announcementsResult.error,
     contentResult.error,
@@ -138,6 +153,7 @@ const fetchSiteData = async (): Promise<SiteData> => {
   return {
     communities: (communitiesResult.data || []) as CommunityRecord[],
     members: (membersResult.data || []) as MemberRecord[],
+    join_requests: (joinRequestsResult.data || []) as JoinRequestRecord[],
     testimonials: (testimonialsResult.data || []) as TestimonialRecord[],
     announcements: (announcementsResult.data || []) as AnnouncementRecord[],
     content,

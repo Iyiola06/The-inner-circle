@@ -133,17 +133,17 @@ export const JoinPage = () => {
             <div className="pt-8 border-t border-border/40">
               <p className="text-sm text-muted mb-6 font-normal">Need immediate assistance?</p>
               <div className="flex flex-col sm:flex-row gap-6">
-                <a href={`mailto:${appSettings.supportEmail || 'hello@innercircle.com'}`} className="text-sm font-medium text-foreground hover:text-brand-primary transition-colors flex items-center gap-3">
+                <a href={`mailto:${appSettings.supportEmail || 'hello@theinnercirclecommunity.org'}`} className="text-sm font-medium text-foreground hover:text-brand-primary transition-colors flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-muted/5 border border-border/40 flex items-center justify-center">
                     <Mail className="w-4 h-4" />
                   </div>
-                  {appSettings.supportEmail || 'hello@innercircle.com'}
+                  {appSettings.supportEmail || 'hello@theinnercirclecommunity.org'}
                 </a>
-                <a href={`tel:${appSettings.supportPhone || '+2348123456789'}`} className="text-sm font-medium text-foreground hover:text-brand-primary transition-colors flex items-center gap-3">
+                <a href={`tel:${appSettings.supportPhone || '+2347016941726'}`} className="text-sm font-medium text-foreground hover:text-brand-primary transition-colors flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-muted/5 border border-border/40 flex items-center justify-center">
                     <Phone className="w-4 h-4" />
                   </div>
-                  {appSettings.supportPhone || '+234 812 345 6789'}
+                  {appSettings.supportPhone || '+234 701 694 1726'}
                 </a>
               </div>
             </div>

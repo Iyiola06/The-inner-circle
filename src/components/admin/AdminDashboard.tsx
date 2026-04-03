@@ -162,7 +162,7 @@ export const AdminDashboard = () => {
   };
 
   const deleteRecord = async (
-    table: 'announcements' | 'testimonials' | 'communities' | 'members',
+    table: 'announcements' | 'testimonials' | 'communities' | 'members' | 'join_requests',
     id: string,
     successMessage: string,
   ) => {
@@ -532,7 +532,42 @@ export const AdminDashboard = () => {
         )}
 
         {activeTab === 'members' && (
-          <Card className="p-8">
+          <div className="space-y-6">
+            <Card className="p-8">
+              <div className="flex items-center justify-between gap-4 mb-6">
+                <h2 className="text-2xl font-display font-medium text-foreground">Join Requests</h2>
+                <p className="text-sm text-muted">New applications pending review.</p>
+              </div>
+              <div className="space-y-4">
+                {(!data.join_requests || data.join_requests.length === 0) ? (
+                  <p className="text-sm text-muted">No pending join requests.</p>
+                ) : (
+                  data.join_requests.map((req) => (
+                    <div key={req.id} className="grid md:grid-cols-[1.2fr_1fr_1fr_0.8fr] gap-4 p-4 rounded-2xl border border-brand-primary/20 bg-brand-primary/5 items-center">
+                      <div>
+                        <p className="font-medium text-foreground">{req.full_name}</p>
+                        <p className="text-sm text-muted">{req.email}</p>
+                      </div>
+                      <p className="text-sm text-foreground">{data.communities.find((c) => c.id === req.community_id)?.name || 'Unknown Community'}</p>
+                      <p className="text-sm text-muted">{req.phone || 'No phone'}</p>
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="text-sm text-brand-primary uppercase font-medium">{req.status || 'new'}</p>
+                        <button
+                          type="button"
+                          className="p-2 rounded-xl border border-border/50 text-muted hover:text-red-600 hover:border-red-500/30 transition-colors"
+                          onClick={() => void deleteRecord('join_requests', req.id, 'Request deleted.')}
+                          disabled={savingKey === `join_requests:delete:${req.id}`}
+                        >
+                          {savingKey === `join_requests:delete:${req.id}` ? <LoaderCircle className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </Card>
+
+            <Card className="p-8">
             <div className="flex items-center justify-between gap-4 mb-6">
               <h2 className="text-2xl font-display font-medium text-foreground">Members</h2>
               <p className="text-sm text-muted">Members are live from the backend. You can add placeholder members or remove records here.</p>
@@ -561,6 +596,7 @@ export const AdminDashboard = () => {
               ))}
             </div>
           </Card>
+          </div>
         )}
         {activeTab === 'communities' && (
           <div className="grid gap-6">

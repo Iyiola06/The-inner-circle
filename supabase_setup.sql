@@ -253,7 +253,7 @@ VALUES
 ON CONFLICT DO NOTHING;
 
 INSERT INTO site_content (key, value) VALUES
-('app_settings', '{"whatsappNumber":"2348123456789","supportEmail":"hello@innercircle.com","supportPhone":"+234 812 345 6789"}'::jsonb),
+('app_settings', '{"whatsappNumber":"2347016941726","supportEmail":"hello@theinnercirclecommunity.org","supportPhone":"+234 701 694 1726"}'::jsonb),
 ('homepage_metrics', '{"weeklyMasterminds":3,"satisfaction":98,"growthRate":100}'::jsonb),
 ('brand_overview', '{"badge":"Our Essence","title":"A Movement of","highlight":"Intentional Souls.","description":"Inner Circle is a purpose-driven, faith-centered ecosystem for individuals committed to spiritual depth, mental clarity, and world-class impact."}'::jsonb),
 ('home_faqs', '[{"question":"What is The Inner Circle?","answer":"The Inner Circle is a purpose-driven, faith-centered community and movement of intentional individuals committed to growth, discipline, and impact."}]'::jsonb)

@@ -1,4 +1,4 @@
-export const WHATSAPP_NUMBER = "+2348000000000"; // Placeholder number
+export const WHATSAPP_NUMBER = "2347016941726";
 
 export const getWhatsAppUrl = (message: string) => {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;

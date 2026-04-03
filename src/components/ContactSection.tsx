@@ -30,8 +30,8 @@ export const ContactSection = () => {
 
             <div className="space-y-8">
               {[
-                { icon: Mail, label: 'Email', value: 'hello@innercircle.com' },
-                { icon: Phone, label: 'Phone', value: '+1 (234) 567-890' },
+                { icon: Mail, label: 'Email', value: 'hello@theinnercirclecommunity.org' },
+                { icon: Phone, label: 'Phone', value: '+234 701 694 1726' },
                 { icon: MapPin, label: 'Location', value: 'Global Community, Based in London' },
               ].map((item, i) => (
                 <div key={i} className="flex items-start gap-6 group">
