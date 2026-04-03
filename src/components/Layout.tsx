@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
+import { AnnouncementBanner } from './AnnouncementBanner';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -17,6 +18,7 @@ export const Layout = ({ children, onViewChange, currentView }: LayoutProps) => 
       >
         Skip to content
       </a>
+      <AnnouncementBanner />
       <Navbar onViewChange={onViewChange} currentView={currentView} />
       <main id="main-content">{children}</main>
       <Footer onViewChange={onViewChange} />

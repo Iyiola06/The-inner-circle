@@ -1,9 +1,10 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { BarChart3, Edit2, Info, LoaderCircle, Megaphone, MessageSquare, Plus, Save, Sparkles, Trash2, Users, Zap } from 'lucide-react';
 import { Card } from '../Card';
 import { Button } from '../Button';
+import { ThemeToggle } from '../ThemeToggle';
 import { useSiteData, useSafeArray } from '../../lib/site-data';
 import { getSupabaseBrowserClient, hasSupabaseBrowserConfig } from '../../lib/supabase-browser';
 import { AdminModal, ConfirmDeleteModal, fieldClassName } from './AdminComponents';

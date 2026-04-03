@@ -70,6 +70,7 @@ export interface TestimonialRecord {
 export interface AnnouncementRecord {
   id: string;
   title: string;
+  body?: string | null;
   status?: string | null;
   author?: string | null;
   target?: string | null;
@@ -208,7 +209,9 @@ export const SiteDataProvider: React.FC<React.PropsWithChildren> = ({ children }
       if (!whatsappNumber) {
         return '#';
       }
-      return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+      const trackingPrefix = '[Website Inquiry]: ';
+      const fullMessage = message.startsWith(trackingPrefix) ? message : trackingPrefix + message;
+      return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(fullMessage)}`;
     };
 
     return {
