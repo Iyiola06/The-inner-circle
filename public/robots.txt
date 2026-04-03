@@ -1,6 +1,13 @@
 User-agent: *
 Allow: /
 
+# Sitemaps
+Sitemap: https://theinnercirclecommunity.org/sitemap.xml
+
+# Block search engines from indexing the admin area
+Disallow: /admin
+Disallow: /admin-login
+
 # Block duplicate internal build artifacts if ever exposed
 Disallow: /src/
 Disallow: /node_modules/
