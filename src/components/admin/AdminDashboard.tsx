@@ -1,6 +1,7 @@
+
 import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'motion/react';
-import { BarChart3, LoaderCircle, Megaphone, MessageSquare, Plus, Save, Users, Zap } from 'lucide-react';
+import { BarChart3, LoaderCircle, Megaphone, MessageSquare, Plus, Save, Trash2, Users, Zap } from 'lucide-react';
 import { Card } from '../Card';
 import { Button } from '../Button';
 import { useSiteData } from '../../lib/site-data';
@@ -24,6 +25,13 @@ type SaveState = {
 
 const fieldClassName =
   'w-full rounded-2xl border border-border/60 bg-background px-4 py-3 text-sm text-foreground outline-none focus:border-brand-primary';
+
+const toSlug = (value: string) =>
+  value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 
 export const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState<TabId>('overview');
@@ -75,6 +83,7 @@ export const AdminDashboard = () => {
           community.id,
           {
             name: community.name || '',
+            slug: community.slug || '',
             tagline: community.tagline || '',
             summary: community.summary || '',
             description: community.description || '',
@@ -142,23 +151,43 @@ export const AdminDashboard = () => {
     try {
       const supabase = getSupabaseBrowserClient();
       const { error } = await ((supabase.from(table) as any).update(values).eq('id', id));
-
-      if (error) {
-        throw error;
-      }
-
+      if (error) throw error;
       await refresh();
       setSaveState({ type: 'success', message: successMessage });
     } catch (error) {
-      setSaveState({
-        type: 'error',
-        message: error instanceof Error ? error.message : 'Unable to save changes.',
-      });
+      setSaveState({ type: 'error', message: error instanceof Error ? error.message : 'Unable to save changes.' });
     } finally {
       setSavingKey(null);
     }
   };
 
+  const deleteRecord = async (
+    table: 'announcements' | 'testimonials' | 'communities' | 'members',
+    id: string,
+    successMessage: string,
+  ) => {
+    if (!hasSupabaseBrowserConfig()) {
+      setSaveState({ type: 'error', message: 'Supabase browser configuration is missing.' });
+      return;
+    }
+
+    if (!window.confirm('Delete this record? This action cannot be undone.')) return;
+
+    setSavingKey(`${table}:delete:${id}`);
+    setSaveState(null);
+
+    try {
+      const supabase = getSupabaseBrowserClient();
+      const { error } = await ((supabase.from(table) as any).delete().eq('id', id));
+      if (error) throw error;
+      await refresh();
+      setSaveState({ type: 'success', message: successMessage });
+    } catch (error) {
+      setSaveState({ type: 'error', message: error instanceof Error ? error.message : 'Unable to delete record.' });
+    } finally {
+      setSavingKey(null);
+    }
+  };
   const createAnnouncement = async () => {
     if (!hasSupabaseBrowserConfig()) {
       setSaveState({ type: 'error', message: 'Supabase browser configuration is missing.' });
@@ -176,19 +205,110 @@ export const AdminDashboard = () => {
         target: 'All Communities',
         status: 'draft',
       }));
-
-      if (error) {
-        throw error;
-      }
-
+      if (error) throw error;
       await refresh();
       setSaveState({ type: 'success', message: 'Announcement created.' });
       setActiveTab('announcements');
     } catch (error) {
-      setSaveState({
-        type: 'error',
-        message: error instanceof Error ? error.message : 'Unable to create announcement.',
-      });
+      setSaveState({ type: 'error', message: error instanceof Error ? error.message : 'Unable to create announcement.' });
+    } finally {
+      setSavingKey(null);
+    }
+  };
+
+  const createCommunity = async () => {
+    if (!hasSupabaseBrowserConfig()) {
+      setSaveState({ type: 'error', message: 'Supabase browser configuration is missing.' });
+      return;
+    }
+
+    setSavingKey('communities:new');
+    setSaveState(null);
+
+    try {
+      const supabase = getSupabaseBrowserClient();
+      const seed = Date.now().toString().slice(-6);
+      const { error } = await ((supabase.from('communities') as any).insert({
+        slug: `new-community-${seed}`,
+        name: 'New Community',
+        tagline: 'Add a short positioning line',
+        summary: 'Add a short summary',
+        description: 'Add the full community description here.',
+        who_its_for: 'Describe who this community is for.',
+        price: 0,
+        price_period: 'year',
+        sort_order: data.communities.length + 1,
+        is_active: true,
+      }));
+      if (error) throw error;
+      await refresh();
+      setSaveState({ type: 'success', message: 'Community created.' });
+      setActiveTab('communities');
+    } catch (error) {
+      setSaveState({ type: 'error', message: error instanceof Error ? error.message : 'Unable to create community.' });
+    } finally {
+      setSavingKey(null);
+    }
+  };
+
+  const createTestimonial = async () => {
+    if (!hasSupabaseBrowserConfig()) {
+      setSaveState({ type: 'error', message: 'Supabase browser configuration is missing.' });
+      return;
+    }
+
+    setSavingKey('testimonials:new');
+    setSaveState(null);
+
+    try {
+      const supabase = getSupabaseBrowserClient();
+      const { error } = await ((supabase.from('testimonials') as any).insert({
+        name: 'New Testimonial',
+        role: 'Member',
+        category: 'Growth',
+        content: 'Add the testimonial content here.',
+        rating: 5,
+        is_featured: false,
+        is_published: true,
+        sort_order: data.testimonials.length + 1,
+      }));
+      if (error) throw error;
+      await refresh();
+      setSaveState({ type: 'success', message: 'Testimonial created.' });
+      setActiveTab('testimonials');
+    } catch (error) {
+      setSaveState({ type: 'error', message: error instanceof Error ? error.message : 'Unable to create testimonial.' });
+    } finally {
+      setSavingKey(null);
+    }
+  };
+
+  const createMember = async () => {
+    if (!hasSupabaseBrowserConfig()) {
+      setSaveState({ type: 'error', message: 'Supabase browser configuration is missing.' });
+      return;
+    }
+
+    setSavingKey('members:new');
+    setSaveState(null);
+
+    try {
+      const supabase = getSupabaseBrowserClient();
+      const defaultCommunity = data.communities[0];
+      const seed = Date.now().toString().slice(-6);
+      const { error } = await ((supabase.from('members') as any).insert({
+        full_name: 'New Member',
+        email: `new-member-${seed}@example.com`,
+        community_slug: defaultCommunity?.slug || 'better-man',
+        community_id: defaultCommunity?.id || null,
+        status: 'active',
+      }));
+      if (error) throw error;
+      await refresh();
+      setSaveState({ type: 'success', message: 'Member created.' });
+      setActiveTab('members');
+    } catch (error) {
+      setSaveState({ type: 'error', message: error instanceof Error ? error.message : 'Unable to create member.' });
     } finally {
       setSavingKey(null);
     }
@@ -209,18 +329,11 @@ export const AdminDashboard = () => {
         { key, value, updated_at: new Date().toISOString() },
         { onConflict: 'key' },
       ));
-
-      if (error) {
-        throw error;
-      }
-
+      if (error) throw error;
       await refresh();
       setSaveState({ type: 'success', message: successMessage });
     } catch (error) {
-      setSaveState({
-        type: 'error',
-        message: error instanceof Error ? error.message : 'Unable to save homepage content.',
-      });
+      setSaveState({ type: 'error', message: error instanceof Error ? error.message : 'Unable to save homepage content.' });
     } finally {
       setSavingKey(null);
     }
@@ -233,7 +346,7 @@ export const AdminDashboard = () => {
           <div>
             <p className="text-xs uppercase tracking-widest text-brand-primary font-medium mb-3">Admin Portal</p>
             <h1 className="text-4xl md:text-5xl font-display font-medium text-foreground tracking-tight mb-3">Live Ecosystem Dashboard</h1>
-            <p className="text-muted text-lg">You can now edit the live communities, announcements, and testimonials here.</p>
+            <p className="text-muted text-lg">You can now create, edit, and delete live communities, announcements, testimonials, and members here.</p>
           </div>
           <div className="flex flex-wrap gap-3">
             {tabs.map((tab) => (
@@ -252,13 +365,25 @@ export const AdminDashboard = () => {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 rounded-3xl border border-border/50 bg-surface p-5">
           <div>
             <p className="text-sm font-medium text-foreground">Admin changes save directly to Supabase.</p>
-            <p className="text-xs uppercase tracking-widest text-muted mt-2">Homepage, communities, announcements and testimonials are editable here</p>
+            <p className="text-xs uppercase tracking-widest text-muted mt-2">Homepage, members, communities, announcements and testimonials are editable here</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
             {saveState && (
               <p className={saveState.type === 'success' ? 'text-sm text-emerald-600 dark:text-emerald-400' : 'text-sm text-red-600 dark:text-red-400'}>
                 {saveState.message}
               </p>
+            )}
+            {activeTab === 'members' && (
+              <Button variant="primary" className="gap-2" onClick={() => void createMember()} disabled={savingKey === 'members:new'}>
+                {savingKey === 'members:new' ? <LoaderCircle className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+                New Member
+              </Button>
+            )}
+            {activeTab === 'communities' && (
+              <Button variant="primary" className="gap-2" onClick={() => void createCommunity()} disabled={savingKey === 'communities:new'}>
+                {savingKey === 'communities:new' ? <LoaderCircle className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+                New Community
+              </Button>
             )}
             {activeTab === 'announcements' && (
               <Button variant="primary" className="gap-2" onClick={() => void createAnnouncement()} disabled={savingKey === 'announcements:new'}>
@@ -266,9 +391,14 @@ export const AdminDashboard = () => {
                 New Announcement
               </Button>
             )}
+            {activeTab === 'testimonials' && (
+              <Button variant="primary" className="gap-2" onClick={() => void createTestimonial()} disabled={savingKey === 'testimonials:new'}>
+                {savingKey === 'testimonials:new' ? <LoaderCircle className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+                New Testimonial
+              </Button>
+            )}
           </div>
         </div>
-
         {activeTab === 'overview' && (
           <div className="space-y-10">
             <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
@@ -405,7 +535,7 @@ export const AdminDashboard = () => {
           <Card className="p-8">
             <div className="flex items-center justify-between gap-4 mb-6">
               <h2 className="text-2xl font-display font-medium text-foreground">Members</h2>
-              <p className="text-sm text-muted">Members are live from the backend. This tab is currently read-only.</p>
+              <p className="text-sm text-muted">Members are live from the backend. You can add placeholder members or remove records here.</p>
             </div>
             <div className="space-y-4">
               {data.members.map((member) => (
@@ -416,13 +546,22 @@ export const AdminDashboard = () => {
                   </div>
                   <p className="text-sm text-foreground">{data.communities.find((community) => community.slug === member.community_slug)?.name || member.community_slug}</p>
                   <p className="text-sm text-muted">{member.phone || 'No phone'}</p>
-                  <p className="text-sm text-muted uppercase">{member.status || 'active'}</p>
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm text-muted uppercase">{member.status || 'active'}</p>
+                    <button
+                      type="button"
+                      className="p-2 rounded-xl border border-border/50 text-muted hover:text-red-600 hover:border-red-500/30 transition-colors"
+                      onClick={() => void deleteRecord('members', member.id, 'Member deleted.')}
+                      disabled={savingKey === `members:delete:${member.id}`}
+                    >
+                      {savingKey === `members:delete:${member.id}` ? <LoaderCircle className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
           </Card>
         )}
-
         {activeTab === 'communities' && (
           <div className="grid gap-6">
             {data.communities.map((community) => {
@@ -443,7 +582,8 @@ export const AdminDashboard = () => {
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-4">
-                    <input className={fieldClassName} value={draft.name || ''} onChange={(event) => setCommunityDrafts((current) => ({ ...current, [community.id]: { ...current[community.id], name: event.target.value } }))} placeholder="Community name" />
+                    <input className={fieldClassName} value={draft.name || ''} onChange={(event) => setCommunityDrafts((current) => ({ ...current, [community.id]: { ...current[community.id], name: event.target.value, slug: toSlug(event.target.value) || current[community.id]?.slug || community.slug } }))} placeholder="Community name" />
+                    <input className={fieldClassName} value={draft.slug || ''} onChange={(event) => setCommunityDrafts((current) => ({ ...current, [community.id]: { ...current[community.id], slug: toSlug(event.target.value) } }))} placeholder="Slug" />
                     <input className={fieldClassName} value={draft.tagline || ''} onChange={(event) => setCommunityDrafts((current) => ({ ...current, [community.id]: { ...current[community.id], tagline: event.target.value } }))} placeholder="Tagline" />
                     <input className={fieldClassName} value={draft.summary || ''} onChange={(event) => setCommunityDrafts((current) => ({ ...current, [community.id]: { ...current[community.id], summary: event.target.value } }))} placeholder="Summary" />
                     <input className={fieldClassName} type="number" value={draft.price ?? 0} onChange={(event) => setCommunityDrafts((current) => ({ ...current, [community.id]: { ...current[community.id], price: Number(event.target.value) } }))} placeholder="Price" />
@@ -451,7 +591,16 @@ export const AdminDashboard = () => {
                     <textarea className={`${fieldClassName} min-h-28 md:col-span-2`} value={draft.who_its_for || ''} onChange={(event) => setCommunityDrafts((current) => ({ ...current, [community.id]: { ...current[community.id], who_its_for: event.target.value } }))} placeholder="Who this is for" />
                   </div>
 
-                  <div className="mt-6 flex justify-end">
+                  <div className="mt-6 flex justify-end gap-3">
+                    <Button
+                      variant="secondary"
+                      className="gap-2 text-red-600 border-red-500/20 hover:bg-red-500/5"
+                      disabled={savingKey === `communities:delete:${community.id}`}
+                      onClick={() => void deleteRecord('communities', community.id, 'Community deleted.')}
+                    >
+                      {savingKey === `communities:delete:${community.id}` ? <LoaderCircle className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                      Delete
+                    </Button>
                     <Button
                       variant="primary"
                       className="gap-2"
@@ -462,6 +611,7 @@ export const AdminDashboard = () => {
                           community.id,
                           {
                             name: draft.name,
+                            slug: draft.slug || community.slug,
                             tagline: draft.tagline,
                             summary: draft.summary,
                             description: draft.description,
@@ -504,35 +654,45 @@ export const AdminDashboard = () => {
 
                   <div className="mt-6 flex items-center justify-between gap-4">
                     <p className="text-sm text-muted">Views: {(announcement.views || 0).toLocaleString()}</p>
-                    <Button
-                      variant="primary"
-                      className="gap-2"
-                      disabled={savingKey === currentSavingKey}
-                      onClick={() =>
-                        void persistRecord(
-                          'announcements',
-                          announcement.id,
-                          {
-                            title: draft.title,
-                            author: draft.author,
-                            target: draft.target,
-                            status: draft.status,
-                            published_at: draft.published_at ? new Date(draft.published_at).toISOString() : null,
-                          },
-                          'Announcement updated.',
-                        )
-                      }
-                    >
-                      {savingKey === currentSavingKey ? <LoaderCircle className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                      Save Announcement
-                    </Button>
+                    <div className="flex items-center gap-3">
+                      <Button
+                        variant="secondary"
+                        className="gap-2 text-red-600 border-red-500/20 hover:bg-red-500/5"
+                        disabled={savingKey === `announcements:delete:${announcement.id}`}
+                        onClick={() => void deleteRecord('announcements', announcement.id, 'Announcement deleted.')}
+                      >
+                        {savingKey === `announcements:delete:${announcement.id}` ? <LoaderCircle className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                        Delete
+                      </Button>
+                      <Button
+                        variant="primary"
+                        className="gap-2"
+                        disabled={savingKey === currentSavingKey}
+                        onClick={() =>
+                          void persistRecord(
+                            'announcements',
+                            announcement.id,
+                            {
+                              title: draft.title,
+                              author: draft.author,
+                              target: draft.target,
+                              status: draft.status,
+                              published_at: draft.published_at ? new Date(draft.published_at).toISOString() : null,
+                            },
+                            'Announcement updated.',
+                          )
+                        }
+                      >
+                        {savingKey === currentSavingKey ? <LoaderCircle className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                        Save Announcement
+                      </Button>
+                    </div>
                   </div>
                 </Card>
               );
             })}
           </div>
         )}
-
         {activeTab === 'testimonials' && (
           <div className="grid gap-6">
             {data.testimonials.map((testimonial) => {
@@ -554,7 +714,16 @@ export const AdminDashboard = () => {
                     </label>
                   </div>
 
-                  <div className="mt-6 flex justify-end">
+                  <div className="mt-6 flex justify-end gap-3">
+                    <Button
+                      variant="secondary"
+                      className="gap-2 text-red-600 border-red-500/20 hover:bg-red-500/5"
+                      disabled={savingKey === `testimonials:delete:${testimonial.id}`}
+                      onClick={() => void deleteRecord('testimonials', testimonial.id, 'Testimonial deleted.')}
+                    >
+                      {savingKey === `testimonials:delete:${testimonial.id}` ? <LoaderCircle className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                      Delete
+                    </Button>
                     <Button
                       variant="primary"
                       className="gap-2"
