@@ -30,8 +30,19 @@ import {
   Menu,
   ChevronLeft,
   Download,
-  Trash
+  Trash,
+  LoaderCircle,
+  Save,
+  Zap,
+  Briefcase,
+  Sparkles,
+  ArrowRight,
+  CheckCircle2,
+  BarChart3
 } from 'lucide-react';
+
+export const fieldClassName =
+  'w-full rounded-2xl border border-border/60 bg-background px-4 py-3 text-sm text-foreground outline-none focus:border-brand-primary';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../../lib/utils';
 import { useTheme } from '../../lib/ThemeContext';
@@ -349,6 +360,45 @@ export const AdminModal = ({ isOpen, onClose, title, children }: { isOpen: boole
       </div>
     )}
   </AnimatePresence>
+);
+
+export const ConfirmDeleteModal = ({ 
+  isOpen, 
+  onClose, 
+  onConfirm, 
+  title = "Confirm Delete", 
+  message = "Are you sure you want to delete this record? This action cannot be undone.",
+  isLoading = false
+}: { 
+  isOpen: boolean, 
+  onClose: () => void, 
+  onConfirm: () => void, 
+  title?: string, 
+  message?: string,
+  isLoading?: boolean
+}) => (
+  <AdminModal isOpen={isOpen} onClose={onClose} title={title}>
+    <div className="space-y-8">
+      <div className="flex items-center gap-6 p-6 rounded-3xl bg-rose-500/5 border border-rose-500/10">
+        <div className="w-14 h-14 rounded-2xl bg-rose-500/10 flex items-center justify-center text-rose-500 shrink-0">
+          <AlertCircle className="w-8 h-8" />
+        </div>
+        <p className="text-muted leading-relaxed font-normal">{message}</p>
+      </div>
+      <div className="flex flex-col sm:flex-row gap-4 justify-end">
+        <Button variant="secondary" onClick={onClose} disabled={isLoading}>Cancel</Button>
+        <Button 
+          variant="primary" 
+          className="bg-rose-500 hover:bg-rose-600 text-white border-none gap-2" 
+          onClick={onConfirm}
+          disabled={isLoading}
+        >
+          {isLoading ? <LoaderCircle className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+          Confirm Delete
+        </Button>
+      </div>
+    </div>
+  </AdminModal>
 );
 
 export const AdminTable = ({ title, columns, data, actions, selectable }: { title: string, columns: string[], data: any[], actions?: boolean, selectable?: boolean }) => {
