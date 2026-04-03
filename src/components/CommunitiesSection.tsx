@@ -7,6 +7,11 @@ import { useSiteData } from '../lib/site-data';
 export const CommunitiesSection = () => {
   const { data, formatCurrency, getWhatsappUrl } = useSiteData();
   const communities = data.communities.slice(0, 3);
+  const getPriceLabel = (value?: string | null) => {
+    if (!value) return 'one-off';
+    const normalized = value.toLowerCase().trim();
+    return ['year', 'per year', 'yearly'].includes(normalized) ? 'one-off' : normalized;
+  };
 
   return (
     <section id="communities" className="py-32 px-6">
@@ -53,7 +58,7 @@ export const CommunitiesSection = () => {
                   <h3 className="text-2xl font-display font-medium text-foreground">{community.name}</h3>
                   <div className="text-right">
                     <div className="text-lg font-medium text-foreground">{formatCurrency(community.price)}</div>
-                    <div className="text-xs text-muted uppercase tracking-widest mt-1">{community.price_period || 'per year'}</div>
+                    <div className="text-xs text-muted uppercase tracking-widest mt-1">{getPriceLabel(community.price_period)}</div>
                   </div>
                 </div>
 

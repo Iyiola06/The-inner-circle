@@ -89,7 +89,7 @@ export const AdminDashboard = () => {
             description: community.description || '',
             who_its_for: community.who_its_for || '',
             price: community.price || 0,
-            price_period: community.price_period || 'year',
+            price_period: community.price_period || 'one-off',
           },
         ]),
       ),
@@ -141,7 +141,7 @@ export const AdminDashboard = () => {
     successMessage: string,
   ) => {
     if (!hasSupabaseBrowserConfig()) {
-      setSaveState({ type: 'error', message: 'Supabase browser configuration is missing.' });
+      setSaveState({ type: 'error', message: 'Secure data connection is not available right now.' });
       return;
     }
 
@@ -167,7 +167,7 @@ export const AdminDashboard = () => {
     successMessage: string,
   ) => {
     if (!hasSupabaseBrowserConfig()) {
-      setSaveState({ type: 'error', message: 'Supabase browser configuration is missing.' });
+      setSaveState({ type: 'error', message: 'Secure data connection is not available right now.' });
       return;
     }
 
@@ -190,7 +190,7 @@ export const AdminDashboard = () => {
   };
   const createAnnouncement = async () => {
     if (!hasSupabaseBrowserConfig()) {
-      setSaveState({ type: 'error', message: 'Supabase browser configuration is missing.' });
+      setSaveState({ type: 'error', message: 'Secure data connection is not available right now.' });
       return;
     }
 
@@ -218,7 +218,7 @@ export const AdminDashboard = () => {
 
   const createCommunity = async () => {
     if (!hasSupabaseBrowserConfig()) {
-      setSaveState({ type: 'error', message: 'Supabase browser configuration is missing.' });
+      setSaveState({ type: 'error', message: 'Secure data connection is not available right now.' });
       return;
     }
 
@@ -236,7 +236,7 @@ export const AdminDashboard = () => {
         description: 'Add the full community description here.',
         who_its_for: 'Describe who this community is for.',
         price: 0,
-        price_period: 'year',
+        price_period: 'one-off',
         sort_order: data.communities.length + 1,
         is_active: true,
       }));
@@ -253,7 +253,7 @@ export const AdminDashboard = () => {
 
   const createTestimonial = async () => {
     if (!hasSupabaseBrowserConfig()) {
-      setSaveState({ type: 'error', message: 'Supabase browser configuration is missing.' });
+      setSaveState({ type: 'error', message: 'Secure data connection is not available right now.' });
       return;
     }
 
@@ -285,7 +285,7 @@ export const AdminDashboard = () => {
 
   const createMember = async () => {
     if (!hasSupabaseBrowserConfig()) {
-      setSaveState({ type: 'error', message: 'Supabase browser configuration is missing.' });
+      setSaveState({ type: 'error', message: 'Secure data connection is not available right now.' });
       return;
     }
 
@@ -316,7 +316,7 @@ export const AdminDashboard = () => {
 
   const saveSiteContent = async (key: string, value: Record<string, any>, successMessage: string) => {
     if (!hasSupabaseBrowserConfig()) {
-      setSaveState({ type: 'error', message: 'Supabase browser configuration is missing.' });
+      setSaveState({ type: 'error', message: 'Secure data connection is not available right now.' });
       return;
     }
 
@@ -346,7 +346,7 @@ export const AdminDashboard = () => {
           <div>
             <p className="text-xs uppercase tracking-widest text-brand-primary font-medium mb-3">Admin Portal</p>
             <h1 className="text-4xl md:text-5xl font-display font-medium text-foreground tracking-tight mb-3">Live Ecosystem Dashboard</h1>
-            <p className="text-muted text-lg">You can now create, edit, and delete live communities, announcements, testimonials, and members here.</p>
+            <p className="text-muted text-lg">You can now create, edit, and delete community content and records here.</p>
           </div>
           <div className="flex flex-wrap gap-3">
             {tabs.map((tab) => (
@@ -364,7 +364,7 @@ export const AdminDashboard = () => {
 
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 rounded-3xl border border-border/50 bg-surface p-5">
           <div>
-            <p className="text-sm font-medium text-foreground">Admin changes save directly to Supabase.</p>
+            <p className="text-sm font-medium text-foreground">Admin changes are saved securely.</p>
             <p className="text-xs uppercase tracking-widest text-muted mt-2">Homepage, members, communities, announcements and testimonials are editable here</p>
           </div>
           <div className="flex items-center gap-3 flex-wrap">
@@ -617,7 +617,7 @@ export const AdminDashboard = () => {
                             description: draft.description,
                             who_its_for: draft.who_its_for,
                             price: Number(draft.price || 0),
-                            price_period: draft.price_period || 'year',
+                            price_period: draft.price_period || 'one-off',
                           },
                           `${draft.name || community.name} updated.`,
                         )

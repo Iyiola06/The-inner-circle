@@ -59,15 +59,15 @@ export const AdminLoginPage = ({
               <span className="text-brand-primary">The Inner Circle.</span>
             </h1>
             <p className="text-lg md:text-xl text-muted leading-relaxed max-w-xl">
-              This login is for approved administrators only. Use your Supabase admin email and password to access the live dashboard.
+              This login is for approved administrators only. Use your authorized admin email and password to access the dashboard.
             </p>
 
             <div className="grid sm:grid-cols-2 gap-4 mt-12">
               {[
                 'Review live members and communities',
                 'Track announcements and testimonials',
-                'Access backend-powered admin screens',
-                'Protected by admin role verification',
+                'Access protected admin screens',
+                'Restricted to approved administrators',
               ].map((item) => (
                 <div key={item} className="rounded-2xl border border-border/50 bg-surface/80 px-5 py-5 text-sm text-foreground font-medium">
                   {item}
@@ -85,7 +85,7 @@ export const AdminLoginPage = ({
           <div className="mb-8">
             <h2 className="text-2xl font-display font-medium text-foreground mb-2">Admin Login</h2>
             <p className="text-sm text-muted leading-relaxed">
-              Sign in with the administrator email and password created in Supabase.
+              Sign in with your administrator email and password.
             </p>
           </div>
 

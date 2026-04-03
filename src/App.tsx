@@ -372,7 +372,7 @@ function AppContent() {
 
   const handleAdminLogin = useCallback(async (email: string, password: string) => {
     if (!hasSupabaseBrowserConfig()) {
-      return { success: false, error: 'Supabase browser credentials are missing from the app environment.' };
+      return { success: false, error: 'Secure sign-in is not available right now.' };
     }
 
     setIsAuthLoading(true);

@@ -22,6 +22,11 @@ export const JoinPage = () => {
   const processSteps = useSafeArray<any>(getContent('join_process_steps', []));
   const faqs = useSafeArray<any>(getContent('join_faqs', []));
   const appSettings = getContent<any>('app_settings', {});
+  const getPriceLabel = (value?: string | null) => {
+    if (!value) return 'one-off';
+    const normalized = value.toLowerCase().trim();
+    return ['year', 'per year', 'yearly', 'yr'].includes(normalized) ? 'one-off' : normalized;
+  };
 
   const selectedCommunity = useMemo(
     () => data.communities.find((community) => community.id === formData.community) || null,
@@ -37,7 +42,7 @@ export const JoinPage = () => {
 
     try {
       if (!hasSupabaseBrowserConfig()) {
-        throw new Error('Supabase is not configured for the browser.');
+        throw new Error('Secure form submission is not available right now.');
       }
 
       const supabase = getSupabaseBrowserClient();
@@ -172,7 +177,7 @@ export const JoinPage = () => {
                           {data.communities.map((community) => (
                             <button key={community.id} type="button" onClick={() => setFormData({ ...formData, community: community.id })} className={cn('p-4 rounded-2xl border text-left transition-all duration-300 flex justify-between items-center', formData.community === community.id ? 'border-brand-primary bg-brand-primary/5 shadow-sm' : 'border-border/40 bg-muted/5 hover:border-brand-primary/30')}>
                               <span className="font-medium text-foreground text-sm">{community.name}</span>
-                              <span className="text-xs font-medium text-muted">{formatCurrency(community.price)}/{community.price_period || 'yr'}</span>
+                              <span className="text-xs font-medium text-muted">{formatCurrency(community.price)}/{getPriceLabel(community.price_period)}</span>
                             </button>
                           ))}
                         </div>

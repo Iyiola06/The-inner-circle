@@ -14,6 +14,11 @@ export const CommunityDetailPage: React.FC<CommunityDetailPageProps> = ({ commun
   const { formatCurrency, getWhatsappUrl } = useSiteData();
   const community = useCommunityBySlug(communityId);
   const memberCount = useCommunityMemberCount(communityId);
+  const getPriceLabel = (value?: string | null) => {
+    if (!value) return 'one-off';
+    const normalized = value.toLowerCase().trim();
+    return ['year', 'per year', 'yearly'].includes(normalized) ? 'one-off' : normalized;
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -27,7 +32,7 @@ export const CommunityDetailPage: React.FC<CommunityDetailPageProps> = ({ commun
     ? useSafeArray<any>(community.stats)
     : [
         { label: 'Active Members', value: memberCount.toLocaleString(), icon: 'Users' },
-        { label: 'Annual Plan', value: formatCurrency(community.price), icon: 'Zap' },
+        { label: 'One-off Payment', value: formatCurrency(community.price), icon: 'Zap' },
         { label: 'Focused Outcome', value: community.focus_outcome || 'Growth', icon: 'Target' },
       ];
 
@@ -96,8 +101,8 @@ export const CommunityDetailPage: React.FC<CommunityDetailPageProps> = ({ commun
             <h3 className="text-2xl font-display font-medium text-foreground">Community Membership</h3>
             <p className="text-muted leading-relaxed font-normal">Get full access to the {community.name} track, including all masterminds, resources, and our global network of intentional individuals.</p>
             <div className="pt-8 border-t border-border/50">
-              <p className="text-4xl font-display font-medium text-foreground mb-2">{formatCurrency(community.price)} <span className="text-lg text-muted font-normal">/ {community.price_period || 'year'}</span></p>
-              <p className="text-xs text-muted mb-8">Billed on your selected membership cycle. Includes all community perks.</p>
+              <p className="text-4xl font-display font-medium text-foreground mb-2">{formatCurrency(community.price)} <span className="text-lg text-muted font-normal">/ {getPriceLabel(community.price_period)}</span></p>
+              <p className="text-xs text-muted mb-8">One-time payment. Includes all community perks.</p>
               <Button variant="whatsapp" className="w-full gap-2" onClick={() => { window.open(getWhatsappUrl(community.whatsapp_message || undefined), '_blank'); }}>
                 <MessageCircle className="w-4 h-4" />
                 Join {community.name}

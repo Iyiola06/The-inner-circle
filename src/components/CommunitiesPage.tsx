@@ -33,6 +33,11 @@ export const CommunitiesPage = () => {
     { label: 'Visible Benefits', value: `${benefits.length}` },
     { label: 'FAQ Blocks', value: `${faqs.length}` },
   ];
+  const getPriceLabel = (value?: string | null) => {
+    if (!value) return 'one-off';
+    const normalized = value.toLowerCase().trim();
+    return ['year', 'per year', 'yearly'].includes(normalized) ? 'one-off' : normalized;
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -71,7 +76,7 @@ export const CommunitiesPage = () => {
                 <div className="space-y-6">
                   <div className="flex items-baseline gap-3">
                     <span className="text-brand-primary font-display font-medium text-5xl md:text-6xl tracking-tight">{formatCurrency(community.price)}</span>
-                    <span className="text-muted text-sm uppercase tracking-widest font-medium">{community.price_period || 'per year'}</span>
+                    <span className="text-muted text-sm uppercase tracking-widest font-medium">{getPriceLabel(community.price_period)}</span>
                   </div>
                   <h2 className="text-4xl md:text-6xl font-display font-medium text-foreground leading-[1.1] tracking-tight">{community.name}</h2>
                   <p className="text-xl text-muted font-normal tracking-tight">{community.tagline || community.summary}</p>
