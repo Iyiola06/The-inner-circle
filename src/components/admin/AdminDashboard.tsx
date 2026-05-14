@@ -7,7 +7,8 @@ import { Button } from '../Button';
 import { ThemeToggle } from '../ThemeToggle';
 import { useSiteData, useSafeArray } from '../../lib/site-data';
 import { getSupabaseBrowserClient, hasSupabaseBrowserConfig } from '../../lib/supabase-browser';
-import { AdminModal, ConfirmDeleteModal, fieldClassName, AdminMediaUpload } from './AdminComponents';
+import { AdminModal, ConfirmDeleteModal, fieldClassName } from './AdminComponents';
+import { AdminMediaUpload } from './AdminMediaUpload';
 
 const tabs = [
   { id: 'overview', label: 'Overview' },
@@ -33,6 +34,22 @@ const toSlug = (value: string) =>
     .trim()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
+
+const isLeadershipEditor = (type?: string) => type === 'new_leader' || type === 'edit_leader';
+const isDepartmentLeadEditor = (type?: string) => type === 'new_dept_lead' || type === 'edit_dept_lead';
+const isDepartmentEditor = (type?: string) => type === 'new_department' || type === 'edit_department';
+const isMemberEditor = (type?: string) => type === 'new_member' || type === 'edit_member';
+const isCommunityEditor = (type?: string) => type === 'new_community' || type === 'edit_community';
+const isAnnouncementEditor = (type?: string) => type === 'new_announcement' || type === 'edit_announcement';
+const isTestimonialEditor = (type?: string) => type === 'new_testimonial' || type === 'edit_testimonial';
+
+const getEditableTable = (type: string) =>
+  isMemberEditor(type) ? 'members' :
+  isCommunityEditor(type) ? 'communities' :
+  isAnnouncementEditor(type) ? 'announcements' :
+  isTestimonialEditor(type) ? 'testimonials' :
+  type === 'edit_join_request' ? 'join_requests' :
+  '';
 
 export const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState<TabId>('overview');
@@ -753,7 +770,7 @@ export const AdminDashboard = () => {
               </div>
             </div>
           )}
-          {editTarget?.type.includes('leader') && (
+          {isLeadershipEditor(editTarget?.type) && (
             <div className="space-y-4">
               <input className={fieldClassName} placeholder="Full Name" value={editTarget.data?.name || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, name: e.target.value } })} />
               <input className={fieldClassName} placeholder="Role" value={editTarget.data?.role || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, role: e.target.value } })} />
@@ -772,7 +789,7 @@ export const AdminDashboard = () => {
             </div>
           )}
 
-          {(editTarget?.type.includes('dept_lead')) && (
+          {isDepartmentLeadEditor(editTarget?.type) && (
             <div className="space-y-4">
               <input className={fieldClassName} placeholder="Full Name" value={editTarget.data?.name || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, name: e.target.value } })} />
               <input className={fieldClassName} placeholder="Role" value={editTarget.data?.role || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, role: e.target.value } })} />
@@ -787,16 +804,23 @@ export const AdminDashboard = () => {
             </div>
           )}
 
-          {editTarget?.type.includes('department') && (
+          {isDepartmentEditor(editTarget?.type) && (
             <div className="space-y-4">
               <input className={fieldClassName} placeholder="Title" value={editTarget.data?.title || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, title: e.target.value } })} />
               <input className={fieldClassName} placeholder="Icon (Heart, Palette, etc)" value={editTarget.data?.icon || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, icon: e.target.value } })} />
+              <div className="space-y-1">
+                <label className="text-[10px] uppercase font-bold text-muted ml-1">Department Image</label>
+                <AdminMediaUpload
+                  currentImageUrl={editTarget.data?.imageUrl || editTarget.data?.image}
+                  onUploadSuccess={(url) => setEditTarget({ ...editTarget, data: { ...editTarget.data, imageUrl: url } })}
+                />
+              </div>
               <textarea className={`${fieldClassName} min-h-32`} placeholder="Description" value={editTarget.data?.description || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, description: e.target.value } })} />
               <input className={fieldClassName} placeholder="Activities (comma separated)" value={Array.isArray(editTarget.data?.activities) ? editTarget.data?.activities.join(', ') : editTarget.data?.activities || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, activities: e.target.value.split(',').map((s: string) => s.trim()).filter(Boolean) } })} />
             </div>
           )}
 
-          {editTarget?.type.includes('member') && (
+          {isMemberEditor(editTarget?.type) && (
             <div className="space-y-4">
               <input className={fieldClassName} placeholder="Full Name" value={editTarget.data?.full_name || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, full_name: e.target.value } })} />
               <input className={fieldClassName} placeholder="Email" value={editTarget.data?.email || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, email: e.target.value } })} />
@@ -816,7 +840,7 @@ export const AdminDashboard = () => {
             </div>
           )}
 
-          {editTarget?.type.includes('community') && (
+          {isCommunityEditor(editTarget?.type) && (
             <div className="space-y-4">
               <input className={fieldClassName} placeholder="Name" value={editTarget.data?.name || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, name: e.target.value, slug: toSlug(e.target.value) } })} />
               <input className={fieldClassName} placeholder="Slug" value={editTarget.data?.slug || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, slug: toSlug(e.target.value) } })} />
@@ -833,7 +857,7 @@ export const AdminDashboard = () => {
             </div>
           )}
 
-          {editTarget?.type.includes('announcement') && (
+          {isAnnouncementEditor(editTarget?.type) && (
             <div className="space-y-4">
               <input className={fieldClassName} placeholder="Title" value={editTarget.data?.title || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, title: e.target.value } })} />
               <textarea className={`${fieldClassName} min-h-32`} placeholder="Announcement Body" value={editTarget.data?.body || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, body: e.target.value } })} />
@@ -846,7 +870,7 @@ export const AdminDashboard = () => {
             </div>
           )}
 
-          {editTarget?.type.includes('testimonial') && (
+          {isTestimonialEditor(editTarget?.type) && (
             <div className="space-y-4">
               <input className={fieldClassName} placeholder="Name" value={editTarget.data?.name || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, name: e.target.value } })} />
               <input className={fieldClassName} placeholder="Role" value={editTarget.data?.role || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, role: e.target.value } })} />
@@ -903,7 +927,7 @@ export const AdminDashboard = () => {
                 const type = editTarget.type;
                 const d = editTarget.data;
 
-                if (type.includes('leader')) {
+                if (isLeadershipEditor(type)) {
                   const current = { ...leadershipDraft };
                   const list = [...(current.leaders || [])];
                   if (type === 'new_leader') list.push(d);
@@ -914,9 +938,9 @@ export const AdminDashboard = () => {
                   await saveSiteContent('hero', d, 'Hero content updated.');
                 } else if (type === 'edit_homepage_metrics') {
                   await saveSiteContent('homepage_metrics', d, 'Homepage metrics updated.');
-                } else if (type.includes('dept_lead') || type.includes('department')) {
+                } else if (isDepartmentLeadEditor(type) || isDepartmentEditor(type)) {
                   const current = { ...departmentsPageDraft };
-                  const key = type.includes('lead') ? 'leads' : 'departments';
+                  const key = isDepartmentLeadEditor(type) ? 'leads' : 'departments';
                   const list = [...(current[key] || [])];
                   if (type.startsWith('new')) list.push(d);
                   else if (editTarget.index !== undefined) list[editTarget.index] = d;
@@ -924,11 +948,7 @@ export const AdminDashboard = () => {
                   await saveSiteContent('departments_page', current, 'Departments updated.');
                 } else {
                   // Direct table updates
-                  const table = type.includes('member') ? 'members' : 
-                                type.includes('community') ? 'communities' :
-                                type.includes('announcement') ? 'announcements' :
-                                type.includes('testimonial') ? 'testimonials' :
-                                type.includes('join_request') ? 'join_requests' : '';
+                  const table = getEditableTable(type);
                   
                   if (table) {
                     const { error } = d.id 
