@@ -7,7 +7,7 @@ import { Button } from '../Button';
 import { ThemeToggle } from '../ThemeToggle';
 import { useSiteData, useSafeArray } from '../../lib/site-data';
 import { getSupabaseBrowserClient, hasSupabaseBrowserConfig } from '../../lib/supabase-browser';
-import { AdminModal, ConfirmDeleteModal, fieldClassName } from './AdminComponents';
+import { AdminModal, ConfirmDeleteModal, fieldClassName, AdminMediaUpload } from './AdminComponents';
 
 const tabs = [
   { id: 'overview', label: 'Overview' },
