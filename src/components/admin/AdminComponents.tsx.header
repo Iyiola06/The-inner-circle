@@ -1,0 +1,51 @@
+import React from 'react';
+import { Layout } from '../Layout';
+import { Card } from '../Card';
+import { Button } from '../Button';
+import { 
+  Users, 
+  Settings, 
+  LayoutDashboard, 
+  CreditCard, 
+  Bell, 
+  Search, 
+  Filter, 
+  MoreVertical, 
+  ArrowUpRight, 
+  ArrowDownRight,
+  Sun,
+  Moon,
+  Plus,
+  Trash2,
+  Edit2,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+  ChevronRight,
+  LogOut,
+  Megaphone,
+  MessageSquare,
+  Palette,
+  X,
+  Menu,
+  ChevronLeft,
+  Download,
+  Trash,
+  LoaderCircle,
+  Save,
+  Zap,
+  Briefcase,
+  Sparkles,
+  ArrowRight,
+  CheckCircle2,
+  BarChart3
+} from 'lucide-react';
+
+export const fieldClassName =
+  'w-full rounded-2xl border border-border/60 bg-background px-4 py-3 text-sm text-foreground outline-none focus:border-brand-primary';
+
+import { motion, AnimatePresence } from 'motion/react';
+import { cn } from '../../lib/utils';
+import { useTheme } from '../../lib/ThemeContext';
+import { getSupabaseBrowserClient } from '../../lib/supabase-browser';
+import { useState, useRef } from 'react';

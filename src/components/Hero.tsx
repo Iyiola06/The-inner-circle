@@ -95,10 +95,9 @@ export const Hero = () => {
         >
           <div className="relative z-10 rounded-2xl overflow-hidden aspect-[4/5] group">
             <img
-              src="https://picsum.photos/seed/innercircle/1000/1250"
+              src="/home.jpeg"
               alt="Members of The Inner Circle community in a premium leadership and growth environment"
               className="w-full h-full object-cover"
-              referrerPolicy="no-referrer"
             />
             <div className="absolute inset-0 bg-black/10 mix-blend-overlay" />
           </div>

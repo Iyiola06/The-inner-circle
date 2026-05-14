@@ -249,6 +249,7 @@ export const AdminDashboard = () => {
                       <div className="flex items-center justify-between gap-4">
                         <div>
                           <p className="font-medium text-foreground">{announcement.title}</p>
+                          {announcement.body && <p className="text-xs text-muted line-clamp-1 mt-1">{announcement.body}</p>}
                           <p className="text-xs uppercase tracking-widest text-muted mt-2">{announcement.status || 'Draft'} | {announcement.target || 'All Communities'}</p>
                         </div>
                         <div className="text-right">
@@ -457,6 +458,15 @@ export const AdminDashboard = () => {
                       </span>
                       <h2 className="text-2xl font-display font-medium text-foreground">{announcement.title}</h2>
                     </div>
+                    
+                    {announcement.body && (
+                      <div className="bg-muted/5 p-4 rounded-xl border border-border/40">
+                        <p className="text-sm text-foreground/80 leading-relaxed">
+                          {announcement.body}
+                        </p>
+                      </div>
+                    )}
+
                     <div className="flex flex-wrap gap-6 text-sm text-muted">
                       <div className="flex items-center gap-2">
                         <Users className="w-4 h-4 opacity-50" />
@@ -747,7 +757,13 @@ export const AdminDashboard = () => {
             <div className="space-y-4">
               <input className={fieldClassName} placeholder="Full Name" value={editTarget.data?.name || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, name: e.target.value } })} />
               <input className={fieldClassName} placeholder="Role" value={editTarget.data?.role || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, role: e.target.value } })} />
-              <input className={fieldClassName} placeholder="Image URL" value={editTarget.data?.imageUrl || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, imageUrl: e.target.value } })} />
+              <div className="space-y-1">
+                <label className="text-[10px] uppercase font-bold text-muted ml-1">Profile Image</label>
+                <AdminMediaUpload 
+                  currentImageUrl={editTarget.data?.imageUrl} 
+                  onUploadSuccess={(url) => setEditTarget({ ...editTarget, data: { ...editTarget.data, imageUrl: url } })} 
+                />
+              </div>
               <textarea className={`${fieldClassName} min-h-32`} placeholder="Biography" value={editTarget.data?.bio || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, bio: e.target.value } })} />
               <div className="grid grid-cols-2 gap-4">
                 <input className={fieldClassName} placeholder="Instagram URL" value={editTarget.data?.socials?.instagram || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, socials: { ...editTarget.data?.socials, instagram: e.target.value } } })} />
@@ -761,7 +777,13 @@ export const AdminDashboard = () => {
               <input className={fieldClassName} placeholder="Full Name" value={editTarget.data?.name || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, name: e.target.value } })} />
               <input className={fieldClassName} placeholder="Role" value={editTarget.data?.role || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, role: e.target.value } })} />
               <input className={fieldClassName} placeholder="Specialty" value={editTarget.data?.specialty || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, specialty: e.target.value } })} />
-              <input className={fieldClassName} placeholder="Image URL" value={editTarget.data?.imageUrl || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, imageUrl: e.target.value } })} />
+              <div className="space-y-1">
+                <label className="text-[10px] uppercase font-bold text-muted ml-1">Profile Image</label>
+                <AdminMediaUpload 
+                  currentImageUrl={editTarget.data?.imageUrl} 
+                  onUploadSuccess={(url) => setEditTarget({ ...editTarget, data: { ...editTarget.data, imageUrl: url } })} 
+                />
+              </div>
             </div>
           )}
 
@@ -801,14 +823,22 @@ export const AdminDashboard = () => {
               <input className={fieldClassName} placeholder="Tagline" value={editTarget.data?.tagline || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, tagline: e.target.value } })} />
               <input className={fieldClassName} placeholder="Price" type="number" value={editTarget.data?.price || 0} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, price: Number(e.target.value) } })} />
               <textarea className={`${fieldClassName} min-h-32`} placeholder="Description" value={editTarget.data?.description || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, description: e.target.value } })} />
+              <div className="space-y-1">
+                <label className="text-[10px] uppercase font-bold text-muted ml-1">Community Image</label>
+                <AdminMediaUpload 
+                  currentImageUrl={editTarget.data?.image_url} 
+                  onUploadSuccess={(url) => setEditTarget({ ...editTarget, data: { ...editTarget.data, image_url: url } })} 
+                />
+              </div>
             </div>
           )}
 
           {editTarget?.type.includes('announcement') && (
             <div className="space-y-4">
               <input className={fieldClassName} placeholder="Title" value={editTarget.data?.title || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, title: e.target.value } })} />
+              <textarea className={`${fieldClassName} min-h-32`} placeholder="Announcement Body" value={editTarget.data?.body || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, body: e.target.value } })} />
               <input className={fieldClassName} placeholder="Author" value={editTarget.data?.author || 'Admin'} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, author: e.target.value } })} />
-              <input className={fieldClassName} placeholder="Target (e.target. All Communities)" value={editTarget.data?.target || 'All Communities'} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, target: e.target.value } })} />
+              <input className={fieldClassName} placeholder="Target (e.g. All Communities)" value={editTarget.data?.target || 'All Communities'} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, target: e.target.value } })} />
               <select className={fieldClassName} value={editTarget.data?.status || 'draft'} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, status: e.target.value } })}>
                 <option value="draft">Draft</option>
                 <option value="published">Published</option>
@@ -821,6 +851,22 @@ export const AdminDashboard = () => {
               <input className={fieldClassName} placeholder="Name" value={editTarget.data?.name || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, name: e.target.value } })} />
               <input className={fieldClassName} placeholder="Role" value={editTarget.data?.role || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, role: e.target.value } })} />
               <textarea className={`${fieldClassName} min-h-32`} placeholder="Content" value={editTarget.data?.content || ''} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, content: e.target.value } })} />
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-1">
+                  <label className="text-[10px] uppercase font-bold text-muted ml-1">Avatar Image</label>
+                  <AdminMediaUpload 
+                    currentImageUrl={editTarget.data?.avatar_url} 
+                    onUploadSuccess={(url) => setEditTarget({ ...editTarget, data: { ...editTarget.data, avatar_url: url } })} 
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] uppercase font-bold text-muted ml-1">Featured Image (Optional)</label>
+                  <AdminMediaUpload 
+                    currentImageUrl={editTarget.data?.image_url} 
+                    onUploadSuccess={(url) => setEditTarget({ ...editTarget, data: { ...editTarget.data, image_url: url } })} 
+                  />
+                </div>
+              </div>
               <div className="flex items-center gap-4">
                 <input className={fieldClassName} placeholder="Rating (1-5)" type="number" min="1" max="5" value={editTarget.data?.rating || 5} onChange={e => setEditTarget({ ...editTarget, data: { ...editTarget.data, rating: Number(e.target.value) } })} />
                 <label className="flex items-center gap-2">
