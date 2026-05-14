@@ -69,7 +69,7 @@ export const BrandOverview = () => {
           >
             <div className="aspect-square rounded-3xl overflow-hidden border border-border/50 shadow-premium group">
               <img
-                src={content.imageUrl || 'https://picsum.photos/seed/vision/1000/1000'}
+                src={content.imageUrl || 'home.jpeg'}
                 alt="Vision"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
                 referrerPolicy="no-referrer"
